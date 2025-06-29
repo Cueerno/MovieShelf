@@ -1,0 +1,15 @@
+{
+  "short_name": "MovieShelf",
+  "name": "MovieShelf React App",
+  "icons": [
+    {
+      "src": "popcorn.ico",
+      "sizes": "255x255",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
