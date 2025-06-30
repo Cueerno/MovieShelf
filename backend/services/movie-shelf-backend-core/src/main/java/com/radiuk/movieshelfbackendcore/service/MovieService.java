@@ -1,0 +1,30 @@
+package com.radiuk.movieshelfbackendcore.service;
+
+import com.radiuk.movieshelfbackendcore.client.OmdbClient;
+import com.radiuk.movieshelfbackendcore.dto.ListMoviesDto;
+import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class MovieService {
+
+    @Value("${api_key}")
+    private String API_KEY;
+
+    private final OmdbClient omdbClient;
+
+    public List<ListMoviesDto> searchMovies(String query) {
+        OmdbSearchResponse response = omdbClient.searchMovies(API_KEY, query);
+
+        if (response == null || response.getSearch() == null) {
+            return List.of();
+        }
+
+        return response.getSearch();
+    }
+}
