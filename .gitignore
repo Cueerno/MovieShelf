@@ -3,4 +3,8 @@
 
 /backend/.env
 
+*.properties
+
+!application.properties.example
+
 MovieShelf.iml
