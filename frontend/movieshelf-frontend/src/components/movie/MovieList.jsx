@@ -1,15 +1,15 @@
-import React from "react";
-import MovieCard from "./MovieCard";
+import React from 'react';
+import MovieCard from './MovieCard';
 
 function MovieList({ movies }) {
     return (
         <div
             style={{
-                display: "flex",
-                justifyContent: "center",
-                flexWrap: "wrap",
-                gap: "20px",
-                marginTop: "30px"
+                display: 'flex',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                gap: '20px',
+                marginTop: '30px'
             }}
         >
             {movies.map((movie) => (
@@ -20,4 +20,3 @@ function MovieList({ movies }) {
 }
 
 export default MovieList;
-
