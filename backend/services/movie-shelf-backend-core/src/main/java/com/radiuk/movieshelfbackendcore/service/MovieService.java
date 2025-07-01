@@ -19,7 +19,6 @@ public class MovieService {
     private String API_KEY;
 
     private final OmdbClient omdbClient;
-    private final ObjectMapper objectMapper;
 
     public List<ListMoviesSearchDto> searchMovies(String query) {
         OmdbSearchResponse response = omdbClient.searchMovies(API_KEY, query);
