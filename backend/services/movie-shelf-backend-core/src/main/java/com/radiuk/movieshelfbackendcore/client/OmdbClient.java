@@ -1,5 +1,6 @@
 package com.radiuk.movieshelfbackendcore.client;
 
+import com.radiuk.movieshelfbackendcore.dto.MovieSearchDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,5 +14,11 @@ public interface OmdbClient {
     OmdbSearchResponse searchMovies(
             @RequestParam("apikey") String apiKey,
             @RequestParam("s") String query
+    );
+
+    @GetMapping("/")
+    MovieSearchDto getMovieByImdbId(
+            @RequestParam("apikey") String apiKey,
+            @RequestParam("i") String imdbId
     );
 }

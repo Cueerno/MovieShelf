@@ -16,7 +16,12 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String query) {
+    public ResponseEntity<?> searchMovies(@RequestParam String query) {
         return ResponseEntity.ok(movieService.searchMovies(query));
+    }
+
+    @GetMapping("/{imdbId}")
+    public ResponseEntity<?> getMovie(@PathVariable String imdbId) {
+        return ResponseEntity.ok(movieService.getMovieByImdbId(imdbId));
     }
 }

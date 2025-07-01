@@ -1,7 +1,9 @@
 package com.radiuk.movieshelfbackendcore.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
-import com.radiuk.movieshelfbackendcore.dto.ListMoviesDto;
+import com.radiuk.movieshelfbackendcore.dto.ListMoviesSearchDto;
+import com.radiuk.movieshelfbackendcore.dto.MovieSearchDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +19,9 @@ public class MovieService {
     private String API_KEY;
 
     private final OmdbClient omdbClient;
+    private final ObjectMapper objectMapper;
 
-    public List<ListMoviesDto> searchMovies(String query) {
+    public List<ListMoviesSearchDto> searchMovies(String query) {
         OmdbSearchResponse response = omdbClient.searchMovies(API_KEY, query);
 
         if (response == null || response.getSearch() == null) {
@@ -26,5 +29,9 @@ public class MovieService {
         }
 
         return response.getSearch();
+    }
+
+    public MovieSearchDto getMovieByImdbId(String imdbId) {
+        return omdbClient.getMovieByImdbId(API_KEY, imdbId);
     }
 }

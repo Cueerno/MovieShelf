@@ -1,7 +1,6 @@
 package com.radiuk.movieshelfbackendcore.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 
@@ -10,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListMoviesDto {
+public class ListMoviesSearchDto {
 
     @JsonAlias("Title")
     private String title;

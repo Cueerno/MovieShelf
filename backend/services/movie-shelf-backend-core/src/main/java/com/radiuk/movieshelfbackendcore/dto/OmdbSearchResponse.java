@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class OmdbSearchResponse {
     @JsonProperty("Search")
-    private List<ListMoviesDto> search;
+    private List<ListMoviesSearchDto> search;
 
 }

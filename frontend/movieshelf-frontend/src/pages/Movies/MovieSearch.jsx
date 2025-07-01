@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SearchBar from '../../components/movie/SearchBar';
 import MovieList from '../../components/movie/MovieList';
-import { searchMovies } from '../../api/movie';
+import { searchMovies } from '../../api/movies';
 
 export default function MovieSearch() {
     const [query, setQuery] = useState('');

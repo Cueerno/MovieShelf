@@ -1,20 +1,17 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import {movieByImdbId} from "../../api/movie";
 
-export default function MovieDetail() {
-    const { movieId } = useParams();
+export default function Movie() {
+    const { imdbId } = useParams();
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch(`https://www.omdbapi.com/?apikey=7aa1d4b5&i=${movieId}`)
-            .then((res) => {
-                if (!res.ok) throw new Error('Movie loading error');
-                return res.json();
-            })
+        movieByImdbId(imdbId)
             .then(setMovie)
             .catch((err) => setError(err.message));
-    }, [movieId]);
+    }, [imdbId]);
 
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!movie) return <p>Loading...</p>;
@@ -37,9 +34,11 @@ export default function MovieDetail() {
             />
             <div>
                 <h2 style={{ marginBottom: '0.5rem' }}>{movie.title}</h2>
-                <p><strong>Год:</strong> {movie.year}</p>
-                <p><strong>Тип:</strong> {movie.type?.charAt(0).toUpperCase() + movie.type?.slice(1)}</p>
-                {/* Здесь можно добавить описание, рейтинг и т.д. */}
+                <p><strong>Year: </strong>{movie.year}</p>
+                <p><strong>Type: </strong>{movie.type?.charAt(0).toUpperCase() + movie.type?.slice(1)}</p>
+                <p><strong>Released: </strong>{movie.released}</p>
+                <p><strong>Runtime: </strong>{movie.runtime}</p>
+                <p><strong>Genre: </strong>{movie.genre}</p>
             </div>
         </div>
     );
