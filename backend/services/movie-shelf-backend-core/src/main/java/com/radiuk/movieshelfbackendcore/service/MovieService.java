@@ -1,6 +1,5 @@
 package com.radiuk.movieshelfbackendcore.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
 import com.radiuk.movieshelfbackendcore.dto.ListMoviesSearchDto;
 import com.radiuk.movieshelfbackendcore.dto.MovieSearchDto;
@@ -19,7 +18,6 @@ public class MovieService {
     private String API_KEY;
 
     private final OmdbClient omdbClient;
-    private final ObjectMapper objectMapper;
 
     public List<ListMoviesSearchDto> searchMovies(String query) {
         OmdbSearchResponse response = omdbClient.searchMovies(API_KEY, query);
