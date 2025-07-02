@@ -1,0 +1,37 @@
+.header {
+    padding: 0.5rem;
+    background-color: #1e1e1e;
+    color: #fff;
+    text-align: center;
+}
+
+.header h2 {
+    margin-bottom: 0.5rem;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    background-color: #333;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: background-color 0.2s ease;
+}
+
+.nav-link-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.nav-link:hover {
+    background-color: #555;
+}

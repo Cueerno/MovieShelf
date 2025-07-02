@@ -1,0 +1,32 @@
+.footer {
+    padding: 1rem 2rem;
+    background-color: #f1f1f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: #333;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.footer a {
+    color: #333;
+    margin-left: 16px;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: #0077cc;
+}
+
+.footer-icons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.footer-icons svg {
+    vertical-align: middle;
+    font-size: 21px;
+}
