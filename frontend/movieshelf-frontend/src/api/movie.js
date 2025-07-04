@@ -1,18 +1,19 @@
 const API_BASE = 'http://localhost:8080/api/v1/movies';
 
 export async function movieByImdbId(imdbId) {
-    try {
-        console.log(imdbId)
-        const res = await fetch(`${API_BASE}/${imdbId}`);
+    const token = localStorage.getItem('token');
 
-        if (!res.ok) {
-            throw new Error('Ошибка загрузки фильма');
-        }
+    const res = await fetch(`${API_BASE}/${imdbId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
-        const data = await res.json();
-        return data;
-
-    } catch (err) {
-        throw err;
+    if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${await res.text()}`);
     }
+
+    return await res.json();
 }
