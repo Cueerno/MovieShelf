@@ -27,7 +27,7 @@ public class CloudinaryService {
     }
 
     public String uploadAvatar(MultipartFile file, Long userId) throws IOException {
-        String publicId = properties.getFolder() + "/" + userId;
+        String publicId = properties.getFolder() + "/" + "user_" + userId;
 
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                 "public_id", publicId,
