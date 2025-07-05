@@ -42,7 +42,7 @@ export default function Header() {
                         <Link to="/login" className="nav-link" onClick={handleLogout}>
                             <span className="nav-link-inner">
                                 <FaSignOutAlt/>
-                                <span>Logout</span>
+                                <span>Log Out</span>
                             </span>
                         </Link>
                     </>
@@ -58,7 +58,7 @@ export default function Header() {
                         <Link to="/login" className="nav-link">
                             <span className="nav-link-inner">
                                 <FaSignInAlt/>
-                                <span>Login</span>
+                                <span>Log In</span>
                             </span>
                         </Link>
                     </>

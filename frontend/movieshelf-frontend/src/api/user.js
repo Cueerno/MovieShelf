@@ -27,7 +27,7 @@ export async function uploadUserAvatar(file) {
     });
 
     if (!res.ok) {
-        throw new Error('Ошибка загрузки');
+        throw new Error('Loading error');
     }
 
     return await res.json();
