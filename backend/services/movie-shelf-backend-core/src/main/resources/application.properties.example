@@ -19,3 +19,9 @@ api_key=
 # For JWT
 secret=
 token_lifecycle=
+
+# For Cloudinary
+cloudinary.cloud-name=
+cloudinary.api-key=
+cloudinary.api-secret=
+cloudinary.folder=

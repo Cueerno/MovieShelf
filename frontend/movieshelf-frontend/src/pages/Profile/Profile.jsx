@@ -1,10 +1,12 @@
 import {useEffect, useState} from 'react';
-import {getUserData} from '../../api/user';
+import {getUserData, uploadUserAvatar} from '../../api/user';
 
 export default function Profile() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
+    const [uploading, setUploading] = useState(false);
+    const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         getUserData()
@@ -19,40 +21,91 @@ export default function Profile() {
             });
     }, []);
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            return;
+        }
 
-    return (<div style={{padding: '2rem'}}>
-        <h2>🔐 Profile</h2>
+        setPreview(URL.createObjectURL(file));
+        setUploading(true);
 
-        {loading && <p>Loading...</p>}
+        try {
+            const data = uploadUserAvatar(file);
 
-        {error && <p style={{color: 'red'}}>{error}</p>}
+            setUser((prev) => ({...prev, avatarUrl: data.avatarUrl}));
+            setPreview(null);
+        } catch (err) {
+            console.error(err);
+            alert('⛔ Не удалось загрузить аватар');
+        } finally {
+            setUploading(false);
+        }
+    };
 
-        {user && (<div
-            style={{
-                background: '#f8f8f8',
-                padding: '1rem',
-                borderRadius: '6px',
-                display: 'flex',
-                gap: '1.5rem',
-                alignItems: 'flex-start',
-            }}
-        >
-            {/*<img*/}
-            {/*    src={`http://localhost:8080${user.avatarUrl}`}*/}
-            {/*    alt={`${user.username}'s avatar`}*/}
-            {/*    style={{*/}
-            {/*        width: '120px',*/}
-            {/*        height: '120px',*/}
-            {/*        borderRadius: '50%',*/}
-            {/*        objectFit: 'cover',*/}
-            {/*        boxShadow: '0 0 6px rgba(0,0,0,0.15)',*/}
-            {/*    }}*/}
-            {/*/>*/}
-            <div>
-                <p><strong>Username:</strong> {user.username}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Registration date:</strong> {user.registeredAt}</p>
-            </div>
-        </div>)}
-    </div>);
+    return (
+        <div style={{padding: '2rem'}}>
+            <h2>🔐 Profile</h2>
+
+            {loading && <p>Loading...</p>}
+            {error && <p style={{color: 'red'}}>{error}</p>}
+
+            {user && (
+                <div
+                    style={{
+                        background: '#f8f8f8',
+                        padding: '1rem',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        gap: '1.5rem',
+                        alignItems: 'flex-start',
+                    }}
+                >
+                    <div style={{position: 'relative'}}>
+                        <img
+                            src={preview || user.avatarUrl}
+                            alt={`${user.username}'s avatar`}
+                            style={{
+                                width: '120px',
+                                height: '120px',
+                                borderRadius: '50%',
+                                objectFit: 'cover',
+                                boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                            }}
+                        />
+                        <label
+                            htmlFor="avatar-upload"
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                right: 0,
+                                background: '#007bff',
+                                color: '#fff',
+                                padding: '4px 8px',
+                                borderRadius: '12px',
+                                fontSize: '12px',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            Изменить
+                        </label>
+                        <input
+                            id="avatar-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            style={{display: 'none'}}
+                        />
+                        {uploading && <p style={{fontSize: '12px'}}>Загрузка...</p>}
+                    </div>
+
+                    <div>
+                        <p><strong>Username:</strong> {user.username}</p>
+                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Registration date:</strong> {user.registeredAt}</p>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }

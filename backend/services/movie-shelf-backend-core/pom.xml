@@ -31,6 +31,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <spring-cloud.version>2025.0.0</spring-cloud.version>
         <jjwt.version>0.11.5</jjwt.version>
+        <cloudinary-http44.version>1.37.0</cloudinary-http44.version>
     </properties>
     <dependencies>
         <dependency>
@@ -104,6 +105,13 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>${cloudinary-http44.version}</version>
+        </dependency>
+
 
     </dependencies>
 

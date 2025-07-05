@@ -19,7 +19,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 
@@ -33,6 +35,7 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtCore jwtCore;
     private final UserDetailsService userDetailsService;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional(readOnly = true)
     public UserDto findByUsername(String username) {
@@ -85,8 +88,11 @@ public class UserService {
     }
 
     @Transactional
-    public void updateAvatarUrl(Long id, String url) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public void updateAvatarUrl(String username, MultipartFile file) throws IOException {
+        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+
+        String url = cloudinaryService.uploadAvatar(file, user.getId());
+        System.out.println(url);
 
         user.setAvatarUrl(url);
         userRepository.save(user);
