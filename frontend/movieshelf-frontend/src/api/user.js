@@ -32,3 +32,17 @@ export async function uploadUserAvatar(file) {
 
     return await res.json();
 }
+
+export async function deleteUser() {
+    const res = await fetch('http://localhost:8080/api/v1/users/delete', {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+    })
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Error deleting: ${text}`);
+    }
+}

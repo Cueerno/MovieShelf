@@ -2,6 +2,7 @@ package com.radiuk.movieshelfbackendcore.controller;
 
 import com.radiuk.movieshelfbackendcore.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,5 +29,11 @@ public class UserController {
     @PostMapping("/avatar")
     public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         return ResponseEntity.ok(Map.of("avatarUrl", userService.updateAvatarUrl(userDetails.getUsername(), file)));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.deleteByUsername(userDetails.getUsername());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "User deleted"));
     }
 }

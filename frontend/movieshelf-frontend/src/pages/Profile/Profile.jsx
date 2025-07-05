@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
-import {getUserData, uploadUserAvatar} from '../../api/user';
+import {deleteUser, getUserData, uploadUserAvatar} from '../../api/user';
+import {useNavigate} from "react-router-dom";
 
 export default function Profile() {
     const [user, setUser] = useState(null);
@@ -7,6 +8,7 @@ export default function Profile() {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [preview, setPreview] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getUserData()
@@ -40,6 +42,23 @@ export default function Profile() {
             alert('⛔ Не удалось загрузить аватар');
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm('Are you sure you want to delete your account?')) {
+            return;
+        }
+
+        try {
+            await deleteUser();
+            localStorage.removeItem('token');
+
+            navigate('/', { replace: true });
+            window.location.reload();
+        } catch (err) {
+            console.error(err);
+            alert('⛔ Failed to delete user');
         }
     };
 
@@ -104,6 +123,22 @@ export default function Profile() {
                         <p><strong>Email:</strong> {user.email}</p>
                         <p><strong>Registration date:</strong> {user.registeredAt}</p>
                     </div>
+
+                    <button
+                        onClick={handleDelete}
+                        style={{
+                            marginTop: '1.5rem',
+                            background: '#dc3545',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '0.6rem 1.2rem',
+                            borderRadius: '6px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        🗑️  Delete account
+                    </button>
                 </div>
             )}
         </div>

@@ -68,8 +68,7 @@ public class UserService {
 
     @Transactional
     public void deleteByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        userRepository.deleteByUsername(user.getUsername());
+        userRepository.deleteByUsername(username);
     }
 
     public String getToken(UserAuthDto userAuthDto) {
