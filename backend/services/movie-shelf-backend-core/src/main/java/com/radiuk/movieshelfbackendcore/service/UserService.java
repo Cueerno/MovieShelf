@@ -7,13 +7,10 @@ import com.radiuk.movieshelfbackendcore.mapper.UserMapper;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
 import com.radiuk.movieshelfbackendcore.security.JwtCore;
-import com.radiuk.movieshelfbackendcore.security.UserDetailsImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -82,19 +79,17 @@ public class UserService {
         return jwtCore.generateToken(userDetails);
     }
 
-    public UserDetailsImpl getUserDetails() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (UserDetailsImpl) authentication.getPrincipal();
-    }
-
     @Transactional
-    public void updateAvatarUrl(String username, MultipartFile file) throws IOException {
+    public String updateAvatarUrl(String username, MultipartFile file) throws IOException {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
         String url = cloudinaryService.uploadAvatar(file, user.getId());
         System.out.println(url);
 
         user.setAvatarUrl(url);
+        user.setUpdatedAt(OffsetDateTime.now());
         userRepository.save(user);
+
+        return url;
     }
 }

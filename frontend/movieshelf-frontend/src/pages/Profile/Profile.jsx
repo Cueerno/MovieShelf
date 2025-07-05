@@ -31,7 +31,7 @@ export default function Profile() {
         setUploading(true);
 
         try {
-            const data = uploadUserAvatar(file);
+            const data = await uploadUserAvatar(file);
 
             setUser((prev) => ({...prev, avatarUrl: data.avatarUrl}));
             setPreview(null);
