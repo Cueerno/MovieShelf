@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import {signup} from "../api/auth";
 
 export default function Signup() {
     const [form, setForm] = useState({username: '', email: '', password: ''});
@@ -15,11 +16,7 @@ export default function Signup() {
         setStatus('⏳ Registration...');
 
         try {
-            const res = await fetch('http://localhost:8080/api/v1/users/auth/signup', {
-                method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(form),
-            });
-
-            if (!res.ok) throw new Error('Error');
+            await signup(form);
 
             setStatus('✅ Registrated');
             setForm({username: '', email: '', password: ''});
