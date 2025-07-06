@@ -21,10 +21,20 @@ export default function Profile() {
             });
     }, []);
 
-    return (<div style={{padding: '2rem'}}>
-        <h2>👤 Профиль</h2>
+    const formatDate = (isoString) => {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toLocaleDateString('en-EN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
 
-        {loading && <p>Загрузка...</p>}
+    return (<div style={{padding: '2rem'}}>
+        {loading && <p>Loading...</p>}
         {error && <p style={{color: 'red'}}>{error}</p>}
 
         {user && (<div
@@ -51,7 +61,7 @@ export default function Profile() {
             <div>
                 <p><strong>Username:</strong> {user.username}</p>
                 <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Registration date:</strong> {user.registeredAt}</p>
+                <p><strong>Registration date:</strong> {formatDate(user.registeredAt)}</p>
             </div>
 
             <button
