@@ -3,6 +3,7 @@ package com.radiuk.movieshelfbackendcore.service;
 import com.radiuk.movieshelfbackendcore.dto.UserAuthDto;
 import com.radiuk.movieshelfbackendcore.dto.UserDto;
 import com.radiuk.movieshelfbackendcore.dto.UserRegistrationDto;
+import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
 import com.radiuk.movieshelfbackendcore.mapper.UserMapper;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
@@ -71,11 +72,21 @@ public class UserService {
         userRepository.deleteByUsername(username);
     }
 
-    public String getToken(UserAuthDto userAuthDto) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userAuthDto.getUsername(), userAuthDto.getPassword());
-        authenticationManager.authenticate(authenticationToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userAuthDto.getUsername());
-        return jwtCore.generateToken(userDetails);
+    @Transactional
+    public void update(String username, UserUpdateDto userUpdateDto) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (userUpdateDto.getUsername() != null) {
+            user.setUsername(userUpdateDto.getUsername());
+        }
+
+        if (userUpdateDto.getEmail() != null) {
+            user.setEmail(userUpdateDto.getEmail());
+        }
+
+        user.setUpdatedAt(OffsetDateTime.now());
+
+        userRepository.save(user);
     }
 
     @Transactional
@@ -90,5 +101,12 @@ public class UserService {
         userRepository.save(user);
 
         return url;
+    }
+
+    public String getToken(UserAuthDto userAuthDto) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userAuthDto.getUsername(), userAuthDto.getPassword());
+        authenticationManager.authenticate(authenticationToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userAuthDto.getUsername());
+        return jwtCore.generateToken(userDetails);
     }
 }

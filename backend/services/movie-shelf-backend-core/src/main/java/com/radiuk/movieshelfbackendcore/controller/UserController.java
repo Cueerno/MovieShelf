@@ -1,5 +1,6 @@
 package com.radiuk.movieshelfbackendcore.controller;
 
+import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
 import com.radiuk.movieshelfbackendcore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,12 @@ public class UserController {
     @PostMapping("/avatar")
     public ResponseEntity<?> uploadAvatar(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         return ResponseEntity.ok(Map.of("avatarUrl", userService.updateAvatarUrl(userDetails.getUsername(), file)));
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<?> update(@RequestBody UserUpdateDto userUpdateDto, @AuthenticationPrincipal UserDetails userDetails) {
+        userService.update(userDetails.getUsername(), userUpdateDto);
+        return ResponseEntity.ok(Map.of("message", "Profile updated"));
     }
 
     @DeleteMapping("/delete")
