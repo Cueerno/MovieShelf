@@ -1,9 +1,10 @@
-export async function getUserData() {
-    const token = localStorage.getItem('token');
+const token = localStorage.getItem('token');
 
+export async function getUserData() {
     const res = await fetch('http://localhost:8080/api/v1/users/me', {
         method: 'GET', headers: {
-            'Content-Type': 'application/json', Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
     });
 
@@ -21,7 +22,7 @@ export async function uploadUserAvatar(file) {
     const res = await fetch('http://localhost:8080/api/v1/users/avatar', {
         method: 'POST',
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
         },
         body: formData,
     });
@@ -38,7 +39,7 @@ export async function updateUser(data) {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
     });
@@ -55,7 +56,7 @@ export async function deleteUser() {
     const res = await fetch('http://localhost:8080/api/v1/users/delete', {
         method: 'DELETE',
         headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
         },
     })
 
