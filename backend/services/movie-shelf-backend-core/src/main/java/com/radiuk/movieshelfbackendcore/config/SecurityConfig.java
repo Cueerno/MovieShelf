@@ -31,9 +31,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize.
                         requestMatchers("/api/v1/users/auth/**").permitAll()
-                        .requestMatchers("/api/v1/users/**", "/api/v1/movies/**").authenticated()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // todo
+                        .anyRequest().authenticated()
+                )
 
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 
