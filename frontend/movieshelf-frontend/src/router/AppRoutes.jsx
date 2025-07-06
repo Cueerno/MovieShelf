@@ -4,8 +4,9 @@ import Home from '../pages/Home/Home';
 import MovieSearch from '../pages/Movies/MovieSearch';
 import Movie from '../pages/Movie/Movie';
 import Profile from "../pages/Profile/Profile";
-import Signup from "../pages/Signup";
-import Login from "../pages/Login";
+import Signup from "../pages/Signup/Signup";
+import Login from "../pages/Login/Login";
+import Settings from "../pages/Settings/Settings"
 
 export default function AppRoutes() {
     return (
