@@ -58,7 +58,7 @@ public class MovieSearchDto {
     private String poster;
 
     @JsonAlias("Ratings")
-    private List<RatingDto> ratings;
+    private List<MovieRatingDto> ratings;
 
     @JsonAlias("Metascore")
     private String metascore;
@@ -86,7 +86,4 @@ public class MovieSearchDto {
 
     @JsonAlias("Website")
     private String website;
-
-    @JsonAlias("Response")
-    private String response;
 }

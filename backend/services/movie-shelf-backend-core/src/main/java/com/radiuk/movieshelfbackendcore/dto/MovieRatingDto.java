@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RatingDto {
+public class MovieRatingDto {
 
     @JsonAlias("Source")
     private String source;
