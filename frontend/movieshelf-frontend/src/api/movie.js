@@ -1,6 +1,6 @@
-export async function movieByImdbId(imdbId) {
-    const token = localStorage.getItem('token');
+const token = localStorage.getItem('token');
 
+export async function movieByImdbId(imdbId) {
     const res = await fetch(`http://localhost:8080/api/v1/movies/${imdbId}`, {
         method: 'GET',
         headers: {
