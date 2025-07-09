@@ -1,11 +1,14 @@
 import {useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
 import {movieByImdbId} from "../../api/movie";
+import {addToFavorites, deleteFromFavorites} from "../../api/favorites";
+import {FaStar} from "react-icons/fa";
 
 export default function Movie() {
     const {imdbId} = useParams();
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState('');
+    const [favError, setFavError] = useState('');
 
     useEffect(() => {
         movieByImdbId(imdbId)
@@ -16,19 +19,54 @@ export default function Movie() {
     if (error) return <p style={{color: 'red'}}>❌ {error}</p>;
     if (!movie) return <p>Loading...</p>;
 
+    const handleToggleFavorite = () => {
+        if (!imdbId) return;
+
+        const action = movie.isUserFavorite ? deleteFromFavorites : addToFavorites;
+
+        action(imdbId)
+            .then(() => {
+                setMovie((prev) => ({...prev, isUserFavorite: !prev.isIserFavorite}));
+            })
+            .catch((err) => setFavError(err.message));
+    }
+
     return (<div style={{padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'flex-start'}}>
-        <img
-            src={movie.poster}
-            alt={movie.title}
-            style={{
-                width: '220px',
-                height: '320px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                boxShadow: '0 0 10px rgba(0,0,0,0.2)'
-            }}
-            onError={(e) => (e.target.src = 'https://via.placeholder.com/220x320?text=No+Poster')}
-        />
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+            <img
+                src={movie.poster}
+                alt={movie.title}
+                style={{
+                    width: '220px',
+                    height: '320px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    boxShadow: '0 0 10px rgba(0,0,0,0.2)'
+                }}
+                onError={(e) => (e.target.src = 'https://via.placeholder.com/220x320?text=No+Poster')}
+            />
+            <button
+                onClick={handleToggleFavorite}
+                style={{
+                    backgroundColor: movie.isUserFavorite ? '#e50914' : '#555',
+                    color: 'white',
+                    padding: '0.6rem 1.2rem',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    fontWeight: 'bold',
+                    marginTop: '1rem'
+                }}
+            >
+                <FaStar/>
+                {movie.isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            </button>
+            {favError && <p style={{color: 'red', marginTop: '0.5rem'}}>❌ {favError}</p>}
+        </div>
+
         <div>
             <h2 style={{marginBottom: '0.5rem'}}>{movie.title}</h2>
             <p><strong>Year: </strong>{movie.year}</p>

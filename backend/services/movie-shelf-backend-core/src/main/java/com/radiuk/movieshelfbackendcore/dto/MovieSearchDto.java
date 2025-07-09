@@ -86,4 +86,6 @@ public class MovieSearchDto {
 
     @JsonAlias("Website")
     private String website;
+
+    private Boolean isUserFavorite;
 }

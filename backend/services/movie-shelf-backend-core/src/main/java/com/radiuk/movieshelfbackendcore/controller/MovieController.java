@@ -26,4 +26,21 @@ public class MovieController {
     public ResponseEntity<?> getByImbdId(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(movieService.findByImdbId(imdbId, userDetails.getUsername()));
     }
+
+    @PostMapping("/{imdbId}")
+    public ResponseEntity<?> addToFavorites(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
+        movieService.addToFavorites(imdbId, userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getFavorites(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(movieService.getFavorites(userDetails.getUsername()));
+    }
+
+    @DeleteMapping("/{imdbId}")
+    public ResponseEntity<?> removeFavorites(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
+        movieService.removeFromFavorites(imdbId, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
 }

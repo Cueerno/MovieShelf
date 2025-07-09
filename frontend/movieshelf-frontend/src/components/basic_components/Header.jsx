@@ -1,6 +1,6 @@
 import {Link, useNavigate} from 'react-router-dom';
 import {useAuth} from '../../context/AuthContext';
-import {FaHome, FaSearch, FaUser, FaSignOutAlt, FaUserPlus, FaSignInAlt} from 'react-icons/fa';
+import {FaHome, FaSearch, FaUser, FaSignOutAlt, FaUserPlus, FaSignInAlt, FaStar} from 'react-icons/fa';
 import './Header.css';
 
 export default function Header() {
@@ -37,6 +37,13 @@ export default function Header() {
                                 <FaUser/>
                                 <span>Profile</span>
                                 </span>
+                        </Link>
+
+                        <Link to={"/favorites"} className={'nav-link'}>
+                            <span className="nav-link-inner">
+                                <FaStar/>
+                                <span>Favorites</span>
+                            </span>
                         </Link>
 
                         <Link to="/login" className="nav-link" onClick={handleLogout}>

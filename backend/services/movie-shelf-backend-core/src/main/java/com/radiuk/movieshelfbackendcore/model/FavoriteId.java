@@ -1,0 +1,44 @@
+package com.radiuk.movieshelfbackendcore.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.Hibernate;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Objects;
+
+@Getter
+@Setter
+@Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
+public class FavoriteId implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 8609905893415119564L;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "movie_id", nullable = false)
+    private Long movieId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        FavoriteId entity = (FavoriteId) o;
+        return Objects.equals(this.movieId, entity.movieId) &&
+                Objects.equals(this.userId, entity.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(movieId, userId);
+    }
+
+}
