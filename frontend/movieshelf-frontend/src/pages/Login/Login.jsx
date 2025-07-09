@@ -49,7 +49,7 @@ export default function Login() {
                 onChange={handleChange}
                 required
             />
-            <button type="submit">Войти</button>
+            <button type="submit">Log In</button>
             <p>{status}</p>
         </form>
     </div>);
