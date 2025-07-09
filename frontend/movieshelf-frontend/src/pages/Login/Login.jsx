@@ -15,7 +15,7 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('⏳ Вход...');
+        setStatus('⏳ Log In...');
 
         try {
             const data = await loginUser(form);
@@ -49,7 +49,7 @@ export default function Login() {
                 onChange={handleChange}
                 required
             />
-            <button type="submit">Войти</button>
+            <button type="submit">Log In</button>
             <p>{status}</p>
         </form>
     </div>);
