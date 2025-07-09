@@ -18,4 +18,6 @@ public class UserDto {
     private OffsetDateTime registeredAt;
 
     private String avatarUrl;
+
+    private OffsetDateTime lastLoginAt;
 }
