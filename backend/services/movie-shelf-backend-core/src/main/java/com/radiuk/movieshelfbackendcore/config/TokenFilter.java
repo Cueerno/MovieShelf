@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,6 +26,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private final JwtCore jwtCore;
     private final UserDetailsService userDetailsService;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
@@ -40,7 +42,9 @@ public class TokenFilter extends OncePerRequestFilter {
                 username = jwtCore.extractUsername(jwt);
             }
             catch (JwtException | IllegalArgumentException e) {
-                throw new BadCredentialsException("Invalid JWT token");
+                SecurityContextHolder.clearContext();
+                authenticationEntryPoint.commence(request, response, new BadCredentialsException("Invalid JWT token"));
+                return;
             }
         }
 

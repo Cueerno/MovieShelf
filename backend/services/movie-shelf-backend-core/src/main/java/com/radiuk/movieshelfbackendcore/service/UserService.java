@@ -4,6 +4,7 @@ import com.radiuk.movieshelfbackendcore.dto.UserAuthDto;
 import com.radiuk.movieshelfbackendcore.dto.UserDto;
 import com.radiuk.movieshelfbackendcore.dto.UserRegistrationDto;
 import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
+import com.radiuk.movieshelfbackendcore.exception.UserNotCreatedException;
 import com.radiuk.movieshelfbackendcore.mapper.UserMapper;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
@@ -52,11 +53,11 @@ public class UserService {
         User user = userMapper.registrationDtoToUser(userRegistrationDTO);
 
         if (userRepository.existsUserByUsername(user.getUsername())) {
-            throw new EntityNotFoundException("User with this username already exists");
+            throw new UserNotCreatedException("User with this username already exists");
         }
 
         if (userRepository.existsUserByEmail(user.getEmail())) {
-            throw new EntityNotFoundException("User with this email already exists");
+            throw new UserNotCreatedException("User with this email already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
