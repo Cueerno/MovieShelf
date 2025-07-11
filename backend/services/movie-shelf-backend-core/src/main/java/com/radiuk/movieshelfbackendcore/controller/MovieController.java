@@ -27,6 +27,11 @@ public class MovieController {
         return ResponseEntity.ok(movieService.findByImdbId(imdbId, userDetails.getUsername()));
     }
 
+    @GetMapping("/top")
+    public ResponseEntity<?> getTopRatedMovies() {
+        return ResponseEntity.ok(movieService.getTopRatedMovies());
+    }
+
     @PostMapping("/{imdbId}")
     public ResponseEntity<?> addToFavorites(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
         movieService.addToFavorites(imdbId, userDetails.getUsername());
