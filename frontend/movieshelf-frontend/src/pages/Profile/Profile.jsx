@@ -62,7 +62,7 @@ export default function Profile() {
                 <p><strong>Username:</strong> {user.username}</p>
                 <p><strong>Email:</strong> {user.email}</p>
                 <p><strong>Registration date:</strong> {formatDate(user.registeredAt)}</p>
-                <p><strong>Last Log In:</strong> {formatDate(user.lastLogInAt)}</p>
+                <p><strong>Last Log In:</strong> {formatDate(user.lastLoginAt)}</p>
             </div>
 
             <button

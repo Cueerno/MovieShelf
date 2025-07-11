@@ -64,6 +64,7 @@ public class UserService {
         user.setRole(User.Role.ROLE_USER);
         user.setRegisteredAt(OffsetDateTime.now());
         user.setUpdatedAt(OffsetDateTime.now());
+        user.setLastLoginAt(OffsetDateTime.now());
 
         userRepository.save(user);
     }
@@ -105,9 +106,15 @@ public class UserService {
     }
 
     public String getToken(UserAuthDto userAuthDto) {
+        User user = userRepository.findByUsername(userAuthDto.getUsername()).orElseThrow(EntityNotFoundException::new);
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userAuthDto.getUsername(), userAuthDto.getPassword());
         authenticationManager.authenticate(authenticationToken);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userAuthDto.getUsername());
+
+        user.setLastLoginAt(OffsetDateTime.now());
+        userRepository.save(user);
+
         return jwtCore.generateToken(userDetails);
     }
 }
