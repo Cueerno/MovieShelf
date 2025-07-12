@@ -23,8 +23,7 @@ export default function Signup() {
 
             setTimeout(() => navigate('/login'), 1000);
         } catch (err) {
-            console.error(err);
-            setStatus('❌ Registration error');
+            setStatus(err.message);
         }
     };
 

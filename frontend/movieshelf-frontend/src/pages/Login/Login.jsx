@@ -25,8 +25,7 @@ export default function Login() {
             setStatus('✅ Success');
             setTimeout(() => navigate('/'), 1000);
         } catch (err) {
-            console.error(err);
-            setStatus('❌ Log In error');
+            setStatus(err.message);
         }
     };
 

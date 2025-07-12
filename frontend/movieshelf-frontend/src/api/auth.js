@@ -5,9 +5,14 @@ export async function signup(form) {
         body: JSON.stringify(form),
     });
 
-    if (!res.ok) throw new Error('Error');
+    const data = await res.json();
 
-    return await res.json();
+    if (!res.ok) {
+        const messages = Array.isArray(data.messages) ? data.messages : [data.message || 'Registration error'];
+        throw new Error(messages.join('\n'));
+    }
+
+    return data;
 }
 
 export async function loginUser(form) {
@@ -19,7 +24,11 @@ export async function loginUser(form) {
         body: JSON.stringify(form),
     });
 
-    if (!res.ok) throw new Error('Error');
+    const data = await res.json();
 
-    return await res.json();
+    if (!res.ok) {
+        const messages = Array.isArray(data.messages) ? data.messages : [data.message || 'Log In error'];
+        throw new Error(messages.join('\n'));
+    }
+    return data;
 }

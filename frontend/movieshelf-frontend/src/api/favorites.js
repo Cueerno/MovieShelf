@@ -9,9 +9,7 @@ export async function getFavorites() {
         },
     });
 
-    if (!res.ok) {
-        throw new Error(`Error ${res.status}: ${await res.text()}`);
-    }
+    if (!res.ok) throw new Error(`Error ${res.status}: ${await res.text()}`);
 
     return await res.json();
 }
@@ -25,9 +23,7 @@ export async function addToFavorites(imdbId) {
         },
     });
 
-    if (!res.ok) {
-        throw new Error(`Error ${res.status}: ${await res.text()}`);
-    }
+    if (!res.ok) throw new Error(`Error ${res.status}: ${await res.text()}`);
 
     //return await res.json();
 }
@@ -41,9 +37,7 @@ export async function deleteFromFavorites(imdbId) {
         },
     });
 
-    if (!res.ok) {
-        throw new Error(`Error ${res.status}: ${await res.text()}`);
-    }
+    if (!res.ok) throw new Error(`Error ${res.status}: ${await res.text()}`);
 
     //return await res.json();
 }
