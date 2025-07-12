@@ -131,8 +131,7 @@ public class MovieService {
 
     public List<MovieSearchDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
-        return movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive).stream()
-                .map(movieMapper::movieToMovieSearchDto)
-                .toList();
+
+        return movieMapper.movieListToMovieSearchDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
     }
 }
