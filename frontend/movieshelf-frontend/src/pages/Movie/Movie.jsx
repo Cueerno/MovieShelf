@@ -43,7 +43,9 @@ export default function Movie() {
                     borderRadius: '8px',
                     boxShadow: '0 0 10px rgba(0,0,0,0.2)'
                 }}
-                onError={(e) => (e.target.src = 'https://via.placeholder.com/220x320?text=No+Poster')}
+                onError={(e) =>
+                    (e.target.src = '/assets/default-movie.png')
+                }
             />
             <button
                 onClick={handleToggleFavorite}

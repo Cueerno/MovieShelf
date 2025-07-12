@@ -48,7 +48,7 @@ export default function Profile() {
             }}
         >
             <img
-                src={user.avatarUrl}
+                src={user.avatarUrl || "/assets/default-avatar.png"}
                 alt={`${user.username}'s avatar`}
                 style={{
                     width: '120px',

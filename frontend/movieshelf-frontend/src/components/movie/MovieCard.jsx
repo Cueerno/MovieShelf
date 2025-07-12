@@ -31,7 +31,7 @@ function MovieCard({movie}) {
                         borderRadius: '4px',
                     }}
                     onError={(e) =>
-                        (e.target.src = 'https://via.placeholder.com/150x220?text=No+Poster')
+                        (e.target.src = '/assets/default-movie.png')
                     }
                 />
                 <h4 title={movie.title}
