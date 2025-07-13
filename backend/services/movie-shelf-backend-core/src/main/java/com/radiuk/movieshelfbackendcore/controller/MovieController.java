@@ -19,8 +19,10 @@ public class MovieController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchByTitle(@RequestParam String query,
+                                           @RequestParam(name = "year", required = false) Short year,
+                                           @RequestParam(name = "type", required = false) String type,
                                            @RequestParam(name = "page", required = false, defaultValue = "1") Byte page) {
-        return ResponseEntity.ok(movieService.searchByTitle(query, page));
+        return ResponseEntity.ok(movieService.searchByTitle(query, year, type, page));
     }
 
     @GetMapping("/{imdbId}")

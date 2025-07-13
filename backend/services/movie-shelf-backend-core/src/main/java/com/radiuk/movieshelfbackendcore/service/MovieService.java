@@ -35,8 +35,8 @@ public class MovieService {
     private final MovieRatingRepository movieRatingRepository;
     private final MovieMapper movieMapper;
 
-    public OmdbSearchResponse searchByTitle(String query, Byte page) {
-        return omdbClient.searchMovies(API_KEY, query, page);
+    public OmdbSearchResponse searchByTitle(String query, Short year, String type, Byte page) {
+        return omdbClient.searchMovies(API_KEY, query, year, type, page);
     }
 
     @Transactional

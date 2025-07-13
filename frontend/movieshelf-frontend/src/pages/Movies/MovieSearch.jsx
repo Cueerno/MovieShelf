@@ -5,6 +5,8 @@ import {searchMovies} from '../../api/movies';
 
 export default function MovieSearch() {
     const [query, setQuery] = useState('');
+    const [year, setYear] = useState('');
+    const [type, setType] = useState('');
     const [movies, setMovies] = useState([]);
     const [status, setStatus] = useState('');
     const [page, setPage] = useState(1);
@@ -15,15 +17,15 @@ export default function MovieSearch() {
     const handleSearch = async (newPage = 1) => {
         setLoading(true);
         setError('');
-        setStatus('🔎 Search...');
+        setStatus('🔎 Searching...');
+
         try {
-            const data = await searchMovies(query, newPage);
+            const data = await searchMovies(query, year, type || undefined, newPage);
             const results = Array.isArray(data.search) ? data.search : [];
 
             setMovies(results);
             setTotalResults(parseInt(data.totalResults || '0', 10));
             setPage(newPage);
-
             setStatus(results.length === 0 ? '🙁 Nothing found' : '');
         } catch (err) {
             console.error(err);
@@ -36,28 +38,35 @@ export default function MovieSearch() {
 
     const maxPage = Math.ceil(totalResults / 10);
 
-    return (<div style={{padding: '20px', textAlign: 'center'}}>
-        <h2>Movie seaching</h2>
-        <SearchBar query={query} setQuery={setQuery} onSearch={handleSearch}/>
-        <p>{status}</p>
-        <MovieList movies={movies}/>
+    return (
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+            <h2>Movie Search</h2>
 
-        {!loading && !error && movies.length > 0 && (
-            <div style={{
-            marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px'
-            }}
-        >
-            <button disabled={page <= 1} onClick={() => handleSearch(page - 1)}>
-                ⬅ Prev
-            </button>
+            <SearchBar
+                query={query}
+                setQuery={setQuery}
+                year={year}
+                setYear={setYear}
+                type={type}
+                setType={setType}
+                onSearch={handleSearch}
+            />
 
-                <span>Page {page} of {maxPage}</span>
+            <p>{status}</p>
+            <MovieList movies={movies} />
 
-                <button disabled={ page >= maxPage } onClick={() => handleSearch(page + 1)}>
-                Next ➡
-            </button>
-
-            </div>
-        )}
-    </div>);
+            {!loading && !error && movies.length > 0 && (
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                    <button disabled={page <= 1} onClick={() => handleSearch(page - 1)}>
+                        ⬅ Prev
+                    </button>
+                    <span>Page {page} of {maxPage}</span>
+                    <button disabled={page >= maxPage} onClick={() => handleSearch(page + 1)}>
+                        Next ➡
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 }
+

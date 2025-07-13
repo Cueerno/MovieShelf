@@ -1,7 +1,16 @@
 const token = localStorage.getItem('token');
 
-export async function searchMovies(query, page) {
-    const res = await fetch(`http://localhost:8080/api/v1/movies/search?query=${encodeURIComponent(query)}&page=${page}`, {
+export async function searchMovies(query, year, type, page) {
+
+    const params = new URLSearchParams({ query });
+
+    if (year) params.append('year', year);
+    if (type) params.append('type', type);
+    if (page) params.append('page', page);
+
+    const res = await fetch(
+        `http://localhost:8080/api/v1/movies/search?${params.toString()}`,
+        {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

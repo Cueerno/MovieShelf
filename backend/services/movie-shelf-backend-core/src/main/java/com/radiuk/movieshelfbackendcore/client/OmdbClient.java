@@ -14,6 +14,8 @@ public interface OmdbClient {
     OmdbSearchResponse searchMovies(
             @RequestParam("apikey") String apiKey,
             @RequestParam("s") String query,
+            @RequestParam(name = "y", required = false) Short year,
+            @RequestParam(name = "type", required = false) String type,
             @RequestParam(name = "page", required = false, defaultValue = "1") Byte page
     );
 
