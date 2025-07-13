@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 
 @Service
@@ -41,6 +42,11 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
         System.out.println(user.getUsername());
         return userMapper.userToUserDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Transactional(readOnly = true)

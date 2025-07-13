@@ -8,6 +8,7 @@ import Signup from "../pages/Signup/Signup";
 import Login from "../pages/Login/Login";
 import Settings from "../pages/Settings/Settings"
 import Favorites from "../pages/Favorites/Favorites"
+import Admin from "../pages/Admin/Admin"
 
 export default function AppRoutes() {
     return (
@@ -24,6 +25,8 @@ export default function AppRoutes() {
                 <Route path="/profile" element={<Profile/>}/>
                 <Route path="/favorites" element={<Favorites/>}/>
                 <Route path="/settings" element={<Settings/>}/>
+
+                <Route path="/admin" element={<Admin/>}/>
             </Route>
         </Routes>
     );
