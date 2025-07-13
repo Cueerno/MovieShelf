@@ -86,7 +86,7 @@ export default function Settings() {
             <div style={{display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem'}}>
                 <div style={{position: 'relative'}}>
                     <img
-                        src={preview || user.avatarUrl}
+                        src={preview || user.avatarUrl || "/assets/default-avatar.png"}
                         alt="avatar"
                         style={{
                             width: '120px',

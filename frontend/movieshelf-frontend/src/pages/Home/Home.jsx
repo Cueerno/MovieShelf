@@ -26,6 +26,8 @@ export default function Home() {
                 alt="Jason Statham"
                 style={{
                     width: '300px',
+                    height: 'auto',
+                    objectFit: 'cover',
                     borderRadius: '8px',
                     boxShadow: '0 0 10px rgba(0,0,0,0.3)',
                     marginTop: '20px'
