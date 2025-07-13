@@ -1,11 +1,11 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import SearchBar from '../../components/movie/SearchBar';
 import MovieList from '../../components/movie/MovieList';
-import {searchMovies} from '../../api/movies';
+import { searchMovies } from '../../api/movies';
 
 export default function MovieSearch() {
     const [query, setQuery] = useState('');
-    const [year, setYear] = useState('');
+    const [year, setYear] = useState(undefined);
     const [type, setType] = useState('');
     const [movies, setMovies] = useState([]);
     const [status, setStatus] = useState('');
@@ -14,7 +14,18 @@ export default function MovieSearch() {
     const [error, setError] = useState('');
     const [totalResults, setTotalResults] = useState(0);
 
+    const [searchHistory, setSearchHistory] = useState(() => {
+        try {
+            const stored = localStorage.getItem('movieSearchHistory');
+            return stored ? JSON.parse(stored) : [];
+        } catch {
+            return [];
+        }
+    });
+
     const handleSearch = async (newPage = 1) => {
+        if (!query.trim()) return;
+
         setLoading(true);
         setError('');
         setStatus('🔎 Searching...');
@@ -27,6 +38,21 @@ export default function MovieSearch() {
             setTotalResults(parseInt(data.totalResults || '0', 10));
             setPage(newPage);
             setStatus(results.length === 0 ? '🙁 Nothing found' : '');
+
+            // Сохраняем в историю
+            const newEntry = { query, year, type };
+            const updatedHistory = [
+                newEntry,
+                ...searchHistory.filter(
+                    (item) =>
+                        item.query !== query ||
+                        item.year !== year ||
+                        item.type !== type
+                ),
+            ].slice(0, 5);
+
+            setSearchHistory(updatedHistory);
+            localStorage.setItem('movieSearchHistory', JSON.stringify(updatedHistory));
         } catch (err) {
             console.error(err);
             setError('❌ Error loading');
@@ -40,7 +66,7 @@ export default function MovieSearch() {
 
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>Movie Search</h2>
+            <h2>🎬 Movie Search</h2>
 
             <SearchBar
                 query={query}
@@ -51,6 +77,54 @@ export default function MovieSearch() {
                 setType={setType}
                 onSearch={handleSearch}
             />
+
+            {searchHistory.length > 0 && (
+                <div style={{ marginBottom: '20px' }}>
+                    <h4>🕘 Recent Searches</h4>
+                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                        {searchHistory.map((item, index) => (
+                            <li key={index}>
+                                <button
+                                    onClick={() => {
+                                        setQuery(item.query);
+                                        setYear(item.year);
+                                        setType(item.type);
+                                        handleSearch(1);
+                                    }}
+                                    style={{
+                                        margin: '4px',
+                                        padding: '6px 10px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                        background: '#f4f4f4',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {item.query}
+                                    {item.year ? `, ${item.year}` : ''}
+                                    {item.type ? `, ${item.type}` : ''}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                    <button
+                        style={{
+                            margin: '4px',
+                            padding: '6px 10px',
+                            border: '1px solid #ccc',
+                            borderRadius: '4px',
+                            background: '#f4f4f4',
+                            cursor: 'pointer',
+                        }}
+                        onClick={() => {
+                            setSearchHistory([]);
+                            localStorage.removeItem('movieSearchHistory');
+                        }}
+                    >
+                        🧹 Clear History
+                    </button>
+                </div>
+            )}
 
             <p>{status}</p>
             <MovieList movies={movies} />
@@ -69,4 +143,3 @@ export default function MovieSearch() {
         </div>
     );
 }
-
