@@ -36,14 +36,8 @@ public class MovieService {
     private final MovieRatingRepository movieRatingRepository;
     private final MovieMapper movieMapper;
 
-    public List<ListMoviesSearchDto> searchByTitle(String query) {
-        OmdbSearchResponse response = omdbClient.searchMovies(API_KEY, query);
-
-        if (response == null || response.getSearch() == null) {
-            return List.of();
-        }
-
-        return response.getSearch();
+    public OmdbSearchResponse searchByTitle(String query, Byte page) {
+        return omdbClient.searchMovies(API_KEY, query, page);
     }
 
     @Transactional

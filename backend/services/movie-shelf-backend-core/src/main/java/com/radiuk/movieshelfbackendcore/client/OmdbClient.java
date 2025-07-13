@@ -13,7 +13,8 @@ public interface OmdbClient {
     @GetMapping("/")
     OmdbSearchResponse searchMovies(
             @RequestParam("apikey") String apiKey,
-            @RequestParam("s") String query
+            @RequestParam("s") String query,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Byte page
     );
 
     @GetMapping("/")

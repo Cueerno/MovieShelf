@@ -1,7 +1,7 @@
-export async function searchMovies(query) {
-    const token = localStorage.getItem('token');
+const token = localStorage.getItem('token');
 
-    const res = await fetch(`http://localhost:8080/api/v1/movies/search?query=${encodeURIComponent(query)}`, {
+export async function searchMovies(query, page) {
+    const res = await fetch(`http://localhost:8080/api/v1/movies/search?query=${encodeURIComponent(query)}&page=${page}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 package com.radiuk.movieshelfbackendcore.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
 import java.util.List;
@@ -12,7 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OmdbSearchResponse {
-    @JsonProperty("Search")
+    @JsonAlias("Search")
     private List<ListMoviesSearchDto> search;
 
+    private String totalResults;
 }
