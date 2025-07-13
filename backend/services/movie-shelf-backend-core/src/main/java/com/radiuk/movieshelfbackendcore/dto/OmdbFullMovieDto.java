@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MovieSearchDto {
+public class OmdbFullMovieDto {
 
     @JsonAlias("Title")
     private String title;

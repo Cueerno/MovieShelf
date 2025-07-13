@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OmdbSearchResponse {
     @JsonAlias("Search")
-    private List<ListMoviesSearchDto> search;
+    private List<OmdbShortMovieDto> search;
 
     private String totalResults;
 }

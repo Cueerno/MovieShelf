@@ -1,7 +1,7 @@
 package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
-import com.radiuk.movieshelfbackendcore.dto.MovieSearchDto;
+import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
@@ -40,24 +40,24 @@ public class MovieService {
     }
 
     @Transactional
-    public MovieSearchDto findByImdbId(String imdbId, String username) {
+    public OmdbFullMovieDto findByImdbId(String imdbId, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 
-        MovieSearchDto movieSearchDto;
+        OmdbFullMovieDto omdbFullMovieDto;
 
         if (optionalMovie.isPresent()) {
             Movie movie = optionalMovie.get();
 
-            movieSearchDto = movieMapper.movieToMovieSearchDto(movie);
-            movieSearchDto.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
+            omdbFullMovieDto = movieMapper.movieToMovieSearchDto(movie);
+            omdbFullMovieDto.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
         }
         else {
-            movieSearchDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
-            movieSearchDto.setIsUserFavorite(false);
+            omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
+            omdbFullMovieDto.setIsUserFavorite(false);
         }
 
-        return movieSearchDto;
+        return omdbFullMovieDto;
     }
 
 
@@ -68,12 +68,12 @@ public class MovieService {
         Movie movie = movieRepository.findByImdbId(imdbId).orElse(null);
 
         if (movie == null) {
-            MovieSearchDto movieSearchDto = findByImdbId(imdbId,  username);
-            movie = movieRepository.save(movieMapper.movieDtoToMovie(movieSearchDto));
+            OmdbFullMovieDto omdbFullMovieDto = findByImdbId(imdbId,  username);
+            movie = movieRepository.save(movieMapper.movieDtoToMovie(omdbFullMovieDto));
 
-            if (movieSearchDto.getRatings() != null) {
+            if (omdbFullMovieDto.getRatings() != null) {
                 Movie finalMovie = movie;
-                List<MovieRating> ratings = movieSearchDto.getRatings().stream()
+                List<MovieRating> ratings = omdbFullMovieDto.getRatings().stream()
                         .map(r -> MovieRating.builder()
                                 .movie(finalMovie)
                                 .source(r.getSource())
@@ -99,7 +99,7 @@ public class MovieService {
     }
 
     @Transactional
-    public List<MovieSearchDto> getFavorites(String username) {
+    public List<OmdbFullMovieDto> getFavorites(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
         return favoriteRepository.findAllByUser(user).stream()
@@ -122,7 +122,7 @@ public class MovieService {
         }
     }
 
-    public List<MovieSearchDto> getTopRatedMovies() {
+    public List<OmdbFullMovieDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
 
         return movieMapper.movieListToMovieSearchDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));

@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListMoviesSearchDto {
+public class OmdbShortMovieDto {
 
     @JsonAlias("Title")
     private String title;
