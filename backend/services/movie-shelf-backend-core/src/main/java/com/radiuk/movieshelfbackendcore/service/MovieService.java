@@ -1,7 +1,6 @@
 package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
-import com.radiuk.movieshelfbackendcore.dto.ListMoviesSearchDto;
 import com.radiuk.movieshelfbackendcore.dto.MovieSearchDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
