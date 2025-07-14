@@ -1,5 +1,5 @@
-import Header from '../components/basic_components/Header';
-import Footer from '../components/basic_components/Footer';
+import Header from '../basic_components/Header';
+import Footer from '../basic_components/Footer';
 import { Outlet } from 'react-router-dom';
 
 export default function PageLayout() {
