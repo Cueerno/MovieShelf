@@ -2,12 +2,14 @@ import {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext";
 import {loginUser} from "../../api/auth";
+import LoginForm from "../../components/auth/LoginForm";
 
 export default function Login() {
     const [form, setForm] = useState({username: '', password: ''});
     const [status, setStatus] = useState('');
     const navigate = useNavigate();
     const {login} = useAuth();
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value});
@@ -30,27 +32,15 @@ export default function Login() {
     };
 
     return (<div style={{padding: '2rem', maxWidth: '400px', margin: 'auto'}}>
-        <h2>🔐 Log In</h2>
-        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
-            <input
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={form.username}
-                onChange={handleChange}
-                required
-            />
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                required
-            />
-            <button type="submit">Log In</button>
-            <p>{status}</p>
-        </form>
+        <LoginForm
+            form={form}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+            status={status}
+
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+        />
     </div>);
 }
 
