@@ -1,17 +1,19 @@
 import {useEffect, useState} from 'react';
 import {getUserData, uploadUserAvatar, deleteUser, updateUser} from '../../api/user';
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function Settings() {
     const [user, setUser] = useState(null);
     const [form, setForm] = useState({username: '', email: ''});
     const [preview, setPreview] = useState(null);
-    const [uploading, setUploading] = useState(false);
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        setIsLoading(true);
         getUserData()
             .then((data) => {
                 setUser(data);
@@ -20,15 +22,18 @@ export default function Settings() {
             .catch((err) => {
                 console.error(err);
                 setError('Failed to load user data');
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
-    }, []);
+    }, [setIsLoading]);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
         setPreview(URL.createObjectURL(file));
-        setUploading(true);
+        setIsLoading(true);
 
         try {
             const data = await uploadUserAvatar(file);
@@ -38,7 +43,7 @@ export default function Settings() {
             console.error(err);
             alert('Failed to upload avatar');
         } finally {
-            setUploading(false);
+            setIsLoading(false);
         }
     };
 
@@ -49,23 +54,23 @@ export default function Settings() {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
         setStatus('Updating...');
+        setIsLoading(true);
 
         try {
             await updateUser(form);
             setStatus('✅ Profile updated');
-
-            setTimeout(() => {
-                navigate('/profile');
-            }, 500);
+            setTimeout(() => navigate('/profile'), 500);
         } catch (err) {
             console.error(err);
             setStatus('❌ Failed to update profile');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-
     const handleDelete = async () => {
         if (!window.confirm('Are you sure you want to delete your account?')) return;
+        setIsLoading(true);
 
         try {
             await deleteUser();
@@ -74,6 +79,8 @@ export default function Settings() {
         } catch (err) {
             console.error(err);
             alert('Failed to delete user');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -83,17 +90,19 @@ export default function Settings() {
         {error && <p style={{color: 'red'}}>{error}</p>}
 
         {user && (<>
-            <div style={{display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem'}}>
+            <div style={{
+                display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '2rem'
+            }}>
                 <div style={{position: 'relative'}}>
                     <img
-                        src={preview || user.avatarUrl || "/assets/default-avatar.png"}
+                        src={preview || user.avatarUrl || '/assets/default-avatar.png'}
                         alt="avatar"
                         style={{
                             width: '120px',
                             height: '120px',
                             borderRadius: '50%',
                             objectFit: 'cover',
-                            boxShadow: '0 0 6px rgba(0,0,0,0.15)',
+                            boxShadow: '0 0 6px rgba(0,0,0,0.15)'
                         }}
                     />
                     <label
@@ -107,7 +116,7 @@ export default function Settings() {
                             padding: '4px 8px',
                             borderRadius: '12px',
                             fontSize: '12px',
-                            cursor: 'pointer',
+                            cursor: 'pointer'
                         }}
                     >
                         Change
@@ -119,7 +128,6 @@ export default function Settings() {
                         onChange={handleFileChange}
                         style={{display: 'none'}}
                     />
-                    {uploading && <p style={{fontSize: '12px'}}>Uploading...</p>}
                 </div>
 
                 <div>
@@ -128,7 +136,12 @@ export default function Settings() {
                 </div>
             </div>
 
-            <form onSubmit={handleFormSubmit} style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+            <form
+                onSubmit={handleFormSubmit}
+                style={{
+                    display: 'flex', flexDirection: 'column', gap: '1rem'
+                }}
+            >
                 <input
                     type="text"
                     name="username"
@@ -154,7 +167,7 @@ export default function Settings() {
                         border: 'none',
                         borderRadius: '6px',
                         fontWeight: 'bold',
-                        cursor: 'pointer',
+                        cursor: 'pointer'
                     }}
                 >
                     💾 Save changes
@@ -173,7 +186,7 @@ export default function Settings() {
                     padding: '0.6rem 1.2rem',
                     borderRadius: '6px',
                     fontWeight: 'bold',
-                    cursor: 'pointer',
+                    cursor: 'pointer'
                 }}
             >
                 🗑️ Delete account

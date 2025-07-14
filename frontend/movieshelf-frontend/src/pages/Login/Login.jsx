@@ -1,15 +1,17 @@
 import {useState} from 'react';
-import {useNavigate} from "react-router-dom";
-import {useAuth} from "../../context/AuthContext";
-import {loginUser} from "../../api/auth";
-import LoginForm from "../../components/auth/LoginForm";
+import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../../context/AuthContext';
+import {loginUser} from '../../api/auth';
+import LoginForm from '../../components/auth/LoginForm';
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function Login() {
     const [form, setForm] = useState({username: '', password: ''});
     const [status, setStatus] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const {login} = useAuth();
-    const [showPassword, setShowPassword] = useState(false);
+    const {setIsLoading} = useGlobalLoading();
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value});
@@ -17,17 +19,18 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('⏳ Log In...');
+        setIsLoading(true);
 
         try {
             const data = await loginUser(form);
-
             login(data.token);
-
             setStatus('✅ Success');
             setTimeout(() => navigate('/'), 1000);
         } catch (err) {
-            setStatus(err.message);
+            console.error(err);
+            setStatus(`❌ ${err.message}`);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -37,7 +40,6 @@ export default function Login() {
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             status={status}
-
             showPassword={showPassword}
             setShowPassword={setShowPassword}
         />

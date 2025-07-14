@@ -1,40 +1,38 @@
 import {useEffect, useState} from 'react';
 import {getUserData} from '../../api/user';
-import {useNavigate} from "react-router-dom";
+import {useNavigate} from 'react-router-dom';
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function Profile() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        setIsLoading(true);
         getUserData()
             .then((data) => {
                 setUser(data);
-                setLoading(false);
             })
             .catch((err) => {
                 console.error(err);
                 setError('⛔ Failed to retrieve user data');
-                setLoading(false);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
-    }, []);
+    }, [setIsLoading]);
 
     const formatDate = (isoString) => {
         if (!isoString) return '';
         const date = new Date(isoString);
         return date.toLocaleDateString('en-EN', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+            day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
         });
     };
 
     return (<div style={{padding: '2rem'}}>
-        {loading && <p>Loading...</p>}
         {error && <p style={{color: 'red'}}>{error}</p>}
 
         {user && (<div
@@ -48,7 +46,7 @@ export default function Profile() {
             }}
         >
             <img
-                src={user.avatarUrl || "/assets/default-avatar.png"}
+                src={user.avatarUrl || '/assets/default-avatar.png'}
                 alt={`${user.username}'s avatar`}
                 style={{
                     width: '120px',
@@ -82,3 +80,4 @@ export default function Profile() {
         </div>)}
     </div>);
 }
+

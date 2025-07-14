@@ -3,21 +3,25 @@ import {useEffect, useState} from 'react';
 import {movieByImdbId} from "../../api/movie";
 import {addToFavorites, deleteFromFavorites} from "../../api/favorites";
 import {FaStar} from "react-icons/fa";
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function Movie() {
     const {imdbId} = useParams();
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState('');
     const [favError, setFavError] = useState('');
+    const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        setIsLoading(true);
         movieByImdbId(imdbId)
             .then(setMovie)
-            .catch((err) => setError(err.message));
+            .catch((err) => setError(err.message))
+            .finally(() => setIsLoading(false));
     }, [imdbId]);
 
+
     if (error) return <p style={{color: 'red'}}>❌ {error}</p>;
-    if (!movie) return <p>Loading...</p>;
 
     const handleToggleFavorite = () => {
         if (!imdbId) return;
@@ -31,6 +35,8 @@ export default function Movie() {
             .catch((err) => setFavError(err.message));
     }
 
+    if (!movie && !error) return null;
+
     return (<div style={{padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'flex-start'}}>
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
             <img
@@ -43,9 +49,7 @@ export default function Movie() {
                     borderRadius: '8px',
                     boxShadow: '0 0 10px rgba(0,0,0,0.2)'
                 }}
-                onError={(e) =>
-                    (e.target.src = '/assets/default-movie.png')
-                }
+                onError={(e) => (e.target.src = '/assets/default-movie.png')}
             />
             <button
                 onClick={handleToggleFavorite}

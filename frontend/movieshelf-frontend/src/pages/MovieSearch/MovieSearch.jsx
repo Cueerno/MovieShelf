@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import SearchBar from '../../components/movie/SearchBar';
 import MovieList from '../../components/movie/MovieList';
-import { searchMovies } from '../../api/movies';
+import {searchMovies} from '../../api/movies';
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function MovieSearch() {
     const [query, setQuery] = useState('');
@@ -10,9 +11,9 @@ export default function MovieSearch() {
     const [movies, setMovies] = useState([]);
     const [status, setStatus] = useState('');
     const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [totalResults, setTotalResults] = useState(0);
+    const {setIsLoading} = useGlobalLoading();
 
     const [searchHistory, setSearchHistory] = useState(() => {
         try {
@@ -26,7 +27,7 @@ export default function MovieSearch() {
     const handleSearch = async (newPage = 1) => {
         if (!query.trim()) return;
 
-        setLoading(true);
+        setIsLoading(true);
         setError('');
         setStatus('🔎 Searching...');
 
@@ -39,17 +40,8 @@ export default function MovieSearch() {
             setPage(newPage);
             setStatus(results.length === 0 ? '🙁 Nothing found' : '');
 
-            // Сохраняем в историю
-            const newEntry = { query, year, type };
-            const updatedHistory = [
-                newEntry,
-                ...searchHistory.filter(
-                    (item) =>
-                        item.query !== query ||
-                        item.year !== year ||
-                        item.type !== type
-                ),
-            ].slice(0, 5);
+            const newEntry = {query, year, type};
+            const updatedHistory = [newEntry, ...searchHistory.filter((item) => item.query !== query || item.year !== year || item.type !== type),].slice(0, 5);
 
             setSearchHistory(updatedHistory);
             localStorage.setItem('movieSearchHistory', JSON.stringify(updatedHistory));
@@ -58,7 +50,7 @@ export default function MovieSearch() {
             setError('❌ Error loading');
             setStatus('');
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -126,20 +118,19 @@ export default function MovieSearch() {
                 </div>
             )}
 
-            <p>{status}</p>
-            <MovieList movies={movies} />
+        {error && <p style={{color: 'red'}}>{error}</p>}
+        <p>{status}</p>
+        <MovieList movies={movies}/>
 
-            {!loading && !error && movies.length > 0 && (
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                    <button disabled={page <= 1} onClick={() => handleSearch(page - 1)}>
-                        ⬅ Prev
-                    </button>
-                    <span>Page {page} of {maxPage}</span>
-                    <button disabled={page >= maxPage} onClick={() => handleSearch(page + 1)}>
-                        Next ➡
-                    </button>
-                </div>
-            )}
-        </div>
-    );
+        {!error && movies.length > 0 && (
+            <div style={{marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '10px'}}>
+                <button disabled={page <= 1} onClick={() => handleSearch(page - 1)}>
+                    ⬅ Prev
+                </button>
+                <span>Page {page} of {maxPage}</span>
+                <button disabled={page >= maxPage} onClick={() => handleSearch(page + 1)}>
+                    Next ➡
+                </button>
+            </div>)}
+    </div>);
 }

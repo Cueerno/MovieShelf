@@ -1,13 +1,17 @@
 import {useState} from 'react';
-import {useNavigate} from "react-router-dom";
-import {signup} from "../../api/auth";
-import SignupForm from "../../components/auth/SignupForm";
+import {useNavigate} from 'react-router-dom';
+import {signup} from '../../api/auth';
+import SignupForm from '../../components/auth/SignupForm';
+import {useGlobalLoading} from '../../context/LoadingContext';
 
 export default function Signup() {
-    const [form, setForm] = useState({username: '', email: '', password: ''});
+    const [form, setForm] = useState({
+        username: '', email: '', password: ''
+    });
     const [status, setStatus] = useState('');
-    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const {setIsLoading} = useGlobalLoading();
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value});
@@ -15,17 +19,18 @@ export default function Signup() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus('⏳ Registration...');
+        setIsLoading(true);
 
         try {
             await signup(form);
-
-            setStatus('✅ Registrated');
             setForm({username: '', email: '', password: ''});
-
+            setStatus('✅ Registration successful');
             setTimeout(() => navigate('/login'), 1000);
         } catch (err) {
-            setStatus(err.message);
+            console.error(err);
+            setStatus(`❌ ${err.message}`);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -35,7 +40,6 @@ export default function Signup() {
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             status={status}
-
             showPassword={showPassword}
             setShowPassword={setShowPassword}
         />
