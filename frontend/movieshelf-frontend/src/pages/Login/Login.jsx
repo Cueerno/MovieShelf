@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../../context/AuthContext';
 import {loginUser} from '../../api/auth';
@@ -12,6 +12,10 @@ export default function Login() {
     const navigate = useNavigate();
     const {login} = useAuth();
     const {setIsLoading} = useGlobalLoading();
+
+    useEffect(() => {
+        document.title = 'Login';
+    }, []);
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value});

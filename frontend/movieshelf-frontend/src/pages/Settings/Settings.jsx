@@ -13,6 +13,7 @@ export default function Settings() {
     const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        document.title = 'Settings';
         setIsLoading(true);
         getUserData()
             .then((data) => {

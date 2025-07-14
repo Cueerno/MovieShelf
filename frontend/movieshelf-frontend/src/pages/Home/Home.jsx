@@ -9,6 +9,7 @@ export default function Home() {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        document.title = 'Movie Shelf';
         setIsLoading(true);
         getTopMovies()
             .then(setTop)

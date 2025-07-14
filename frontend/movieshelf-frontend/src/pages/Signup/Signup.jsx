@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {signup} from '../../api/auth';
 import SignupForm from '../../components/auth/SignupForm';
@@ -12,6 +12,10 @@ export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const {setIsLoading} = useGlobalLoading();
+
+    useEffect(() => {
+        document.title = 'Signup';
+    }, []);
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value});

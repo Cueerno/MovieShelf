@@ -10,6 +10,7 @@ export default function Profile() {
     const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        document.title = 'Profile';
         setIsLoading(true);
         getUserData()
             .then((data) => {

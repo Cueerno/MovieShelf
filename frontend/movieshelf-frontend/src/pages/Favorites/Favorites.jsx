@@ -9,6 +9,7 @@ export default function FavoritesPage() {
     const [error, setError] = useState('');
 
     useEffect(() => {
+        document.title = 'Favorites';
         setIsLoading(true);
         getFavorites()
             .then(setFavorites)

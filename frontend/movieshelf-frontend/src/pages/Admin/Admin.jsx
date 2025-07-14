@@ -9,6 +9,7 @@ export default function AdminPage() {
     const {setIsLoading} = useGlobalLoading();
 
     useEffect(() => {
+        document.title = 'Admin';
         setIsLoading(true);
         getAllUsers()
             .then(data => {

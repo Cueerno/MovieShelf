@@ -20,6 +20,13 @@ export default function Movie() {
             .finally(() => setIsLoading(false));
     }, [imdbId]);
 
+    useEffect(() => {
+        if (movie) {
+            document.title = `${movie.title}`;
+        }
+    }, [movie]);
+
+
 
     if (error) return <p style={{color: 'red'}}>❌ {error}</p>;
 

@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import SearchBar from '../../components/movie/SearchBar';
 import MovieList from '../../components/movie/MovieList';
 import {searchMovies} from '../../api/movies';
@@ -23,6 +23,10 @@ export default function MovieSearch() {
             return [];
         }
     });
+
+    useEffect(() => {
+        document.title = 'Movie Search';
+    }, []);
 
     const handleSearch = async (newPage = 1) => {
         if (!query.trim()) return;
