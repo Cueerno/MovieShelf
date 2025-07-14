@@ -49,7 +49,7 @@ public class MovieService {
         if (optionalMovie.isPresent()) {
             Movie movie = optionalMovie.get();
 
-            omdbFullMovieDto = movieMapper.movieToMovieSearchDto(movie);
+            omdbFullMovieDto = movieMapper.movieToOmdbFullMovieDto(movie);
             omdbFullMovieDto.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
         }
         else {
@@ -104,7 +104,7 @@ public class MovieService {
 
         return favoriteRepository.findAllByUser(user).stream()
                 .map(Favorite::getMovie)
-                .map(movieMapper::movieToMovieSearchDto)
+                .map(movieMapper::movieToOmdbFullMovieDto)
                 .toList();
     }
 
@@ -124,7 +124,6 @@ public class MovieService {
 
     public List<OmdbFullMovieDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
-
-        return movieMapper.movieListToMovieSearchDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
+        return movieMapper.movieListToOmdbFullMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
     }
 }

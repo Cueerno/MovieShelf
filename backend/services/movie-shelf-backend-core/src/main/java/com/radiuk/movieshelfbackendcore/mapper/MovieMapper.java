@@ -12,7 +12,7 @@ public interface MovieMapper {
 
     Movie movieDtoToMovie(OmdbFullMovieDto omdbFullMovieDto);
 
-    OmdbFullMovieDto movieToMovieSearchDto(Movie movie);
+    OmdbFullMovieDto movieToOmdbFullMovieDto(Movie movie);
 
-    List<OmdbFullMovieDto> movieListToMovieSearchDtoList(List<Movie> movies);
+    List<OmdbFullMovieDto> movieListToOmdbFullMovieDtoList(List<Movie> movies);
 }
