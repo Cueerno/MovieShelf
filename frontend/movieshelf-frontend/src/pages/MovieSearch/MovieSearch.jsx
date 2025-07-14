@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import SearchBar from '../../components/movie/SearchBar';
 import MovieList from '../../components/movie/MovieList';
 import {searchMovies} from '../../api/movies';
@@ -56,59 +56,37 @@ export default function MovieSearch() {
 
     const maxPage = Math.ceil(totalResults / 10);
 
-    return (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h2>🎬 Movie Search</h2>
+    return (<div style={{padding: '20px', textAlign: 'center'}}>
+        <h2>🎬 Movie Search</h2>
 
-            <SearchBar
-                query={query}
-                setQuery={setQuery}
-                year={year}
-                setYear={setYear}
-                type={type}
-                setType={setType}
-                onSearch={handleSearch}
-            />
+        <SearchBar
+            query={query}
+            setQuery={setQuery}
+            year={year}
+            setYear={setYear}
+            type={type}
+            setType={setType}
+            onSearch={handleSearch}
+        />
 
-            {searchHistory.length > 0 && (
-                <div style={{ marginBottom: '20px' }}>
-                    <h4>🕘 Recent Searches</h4>
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                        {searchHistory.map((item, index) => (
-                            <li key={index}>
-                                <button
-                                    onClick={() => {
-                                        setQuery(item.query);
-                                        setYear(item.year);
-                                        setType(item.type);
-                                        handleSearch(1);
-                                    }}
-                                    style={{
-                                        margin: '4px',
-                                        padding: '6px 10px',
-                                        border: '1px solid #ccc',
-                                        borderRadius: '4px',
-                                        background: '#f4f4f4',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    {item.query}
-                                    {item.year ? `, ${item.year}` : ''}
-                                    {item.type ? `, ${item.type}` : ''}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+        {(<div style={{marginBottom: '20px'}}>
+                <div style={{
+                    display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginBottom: '10px'
+                }}>
+                    <h4 style={{margin: 0}}>🕘 Recent Searches</h4>
                     <button
+                        disabled={searchHistory.length === 0}
                         style={{
-                            margin: '4px',
                             padding: '6px 10px',
                             border: '1px solid #ccc',
                             borderRadius: '4px',
-                            background: '#f4f4f4',
-                            cursor: 'pointer',
+                            background: searchHistory.length === 0 ? '#eaeaea' : '#f4f4f4',
+                            color: searchHistory.length === 0 ? '#999' : '#000',
+                            cursor: searchHistory.length === 0 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.9rem'
                         }}
                         onClick={() => {
+                            if (searchHistory.length === 0) return;
                             setSearchHistory([]);
                             localStorage.removeItem('movieSearchHistory');
                         }}
@@ -116,7 +94,40 @@ export default function MovieSearch() {
                         🧹 Clear History
                     </button>
                 </div>
-            )}
+
+                <ul style={{
+                    listStyle: 'none',
+                    padding: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                    gap: '10px'
+                }}>
+                    {searchHistory.length === 0 ? (<li style={{fontStyle: 'italic', color: '#888'}}>No recent searches
+                        yet</li>) : (searchHistory.map((item, index) => (<li key={index}>
+                        <button
+                            onClick={() => {
+                                setQuery(item.query);
+                                setYear(item.year);
+                                setType(item.type);
+                                handleSearch(1);
+                            }}
+                            style={{
+                                padding: '6px 10px',
+                                border: '1px solid #ccc',
+                                borderRadius: '4px',
+                                background: '#f4f4f4',
+                                cursor: 'pointer',
+                                fontSize: '0.9rem'
+                            }}
+                        >
+                            {item.query}
+                            {item.year ? `, ${item.year}` : ''}
+                            {item.type ? `, ${item.type}` : ''}
+                        </button>
+                    </li>)))}
+                </ul>
+            </div>)}
 
         {error && <p style={{color: 'red'}}>{error}</p>}
         <p>{status}</p>
