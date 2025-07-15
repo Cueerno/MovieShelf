@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -47,6 +49,13 @@ public class User {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private Set<Favorite> favorites = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public enum Role {
         ROLE_ADMIN, ROLE_USER

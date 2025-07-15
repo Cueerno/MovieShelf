@@ -1,0 +1,19 @@
+.comment-item {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-item .header {
+    font-size: 0.9rem;
+    color: #777;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-item .actions {
+    margin-top: 0.5rem;
+}
+
+.comment-item button {
+    margin-right: 0.5rem;
+}

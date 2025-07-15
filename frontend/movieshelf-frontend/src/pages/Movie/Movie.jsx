@@ -4,6 +4,7 @@ import {movieByImdbId} from "../../api/movie";
 import {addToFavorites, deleteFromFavorites} from "../../api/favorites";
 import {FaStar} from "react-icons/fa";
 import {useGlobalLoading} from '../../context/LoadingContext';
+import CommentSection from '../../components/comment/CommentSection'
 
 export default function Movie() {
     const {imdbId} = useParams();
@@ -11,6 +12,7 @@ export default function Movie() {
     const [error, setError] = useState('');
     const [favError, setFavError] = useState('');
     const {setIsLoading} = useGlobalLoading();
+    const [showComments, setShowComments] = useState(false);
 
     useEffect(() => {
         setIsLoading(true);
@@ -110,6 +112,24 @@ export default function Movie() {
                     </li>))}
                 </ul>
             </div>
+            <button onClick={() => setShowComments(prev => !prev)} style={{
+                backgroundColor: '#eee',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                marginTop: '1rem'
+            }}>
+                💬 Comments
+            </button>
+
+            {showComments && (
+                <div style={{marginTop: '1.5rem'}}>
+                    <CommentSection imdbId={imdbId} />
+                </div>
+            )}
+
         </div>
     </div>);
 }

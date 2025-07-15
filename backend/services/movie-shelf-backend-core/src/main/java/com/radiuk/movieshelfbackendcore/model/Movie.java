@@ -3,6 +3,7 @@ package com.radiuk.movieshelfbackendcore.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,4 +78,10 @@ public class Movie {
             orphanRemoval = true,
             fetch = FetchType.LAZY)
     private Set<Favorite> favorites = new HashSet<>();
+
+    @OneToMany(mappedBy = "movie",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 }
