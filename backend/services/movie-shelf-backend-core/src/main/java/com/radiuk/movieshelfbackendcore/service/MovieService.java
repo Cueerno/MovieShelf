@@ -6,10 +6,7 @@ import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
 import com.radiuk.movieshelfbackendcore.model.id.FavoriteId;
-import com.radiuk.movieshelfbackendcore.repository.FavoriteRepository;
-import com.radiuk.movieshelfbackendcore.repository.MovieRatingRepository;
-import com.radiuk.movieshelfbackendcore.repository.MovieRepository;
-import com.radiuk.movieshelfbackendcore.repository.UserRepository;
+import com.radiuk.movieshelfbackendcore.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +31,7 @@ public class MovieService {
     private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
     private final MovieRatingRepository movieRatingRepository;
+    private final CommentRepository commentRepository;
     private final MovieMapper movieMapper;
 
     public OmdbSearchResponse searchByTitle(String query, Short year, String type, Byte page) {
@@ -57,6 +55,8 @@ public class MovieService {
             omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
             omdbFullMovieDto.setIsUserFavorite(false);
         }
+
+        omdbFullMovieDto.setCommentsCount(commentRepository.countByMovieImdbId(imdbId));
 
         return omdbFullMovieDto;
     }

@@ -1,3 +1,9 @@
+p {
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+
 .comment-item {
     padding: 1rem;
     border-bottom: 1px solid #eee;
@@ -16,4 +22,19 @@
 
 .comment-item button {
     margin-right: 0.5rem;
+}
+
+.comment-feed {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 4px;
+    scrollbar-width: thin;
+}
+
+.comment-feed::-webkit-scrollbar {
+    width: 6px;
+}
+.comment-feed::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
 }

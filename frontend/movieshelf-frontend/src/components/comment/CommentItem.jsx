@@ -1,3 +1,5 @@
+import './CommentItem.css'
+
 export default function CommentItem({ comment }) {
     return (
         <div style={{
@@ -12,8 +14,8 @@ export default function CommentItem({ comment }) {
           {new Date(comment.createdAt).toLocaleString()}
         </span>
             </div>
-            <p style={{ margin: 0 }}>{comment.text}</p>
-            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
+            <p style={{margin: 0}}>{comment.text}</p>
+            <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                 <button>✏️</button>
                 <button>🗑️</button>
             </div>

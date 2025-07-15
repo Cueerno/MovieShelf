@@ -88,4 +88,6 @@ public class OmdbFullMovieDto {
     private String website;
 
     private Boolean isUserFavorite;
+
+    private long commentsCount;
 }

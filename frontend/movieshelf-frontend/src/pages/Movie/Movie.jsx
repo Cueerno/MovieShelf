@@ -13,11 +13,15 @@ export default function Movie() {
     const [favError, setFavError] = useState('');
     const {setIsLoading} = useGlobalLoading();
     const [showComments, setShowComments] = useState(false);
+    const [commentsCount, setCommentsCount] = useState(0);
 
     useEffect(() => {
         setIsLoading(true);
         movieByImdbId(imdbId)
-            .then(setMovie)
+            .then(data => {
+                setMovie(data);
+                setCommentsCount(data.commentsCount);
+            })
             .catch((err) => setError(err.message))
             .finally(() => setIsLoading(false));
     }, [imdbId]);
@@ -121,12 +125,12 @@ export default function Movie() {
                 fontWeight: '500',
                 marginTop: '1rem'
             }}>
-                💬 Comments
+                💬 Comments {commentsCount > 0 && `(${commentsCount})`}
             </button>
 
             {showComments && (
                 <div style={{marginTop: '1.5rem'}}>
-                    <CommentSection imdbId={imdbId} />
+                    <CommentSection imdbId={imdbId} setCommentsCount={setCommentsCount} />
                 </div>
             )}
 
