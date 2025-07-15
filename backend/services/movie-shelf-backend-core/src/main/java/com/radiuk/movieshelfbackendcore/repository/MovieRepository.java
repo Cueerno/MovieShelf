@@ -14,6 +14,7 @@ import java.util.Optional;
 @Repository
 public interface MovieRepository extends JpaRepository<Movie, Long> {
 
+    @EntityGraph(attributePaths = "ratings")
     Optional<Movie> findByImdbId(String imdbId);
 
     @EntityGraph(attributePaths = "ratings")
