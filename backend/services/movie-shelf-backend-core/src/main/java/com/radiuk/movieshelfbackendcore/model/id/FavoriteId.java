@@ -1,4 +1,4 @@
-package com.radiuk.movieshelfbackendcore.model;
+package com.radiuk.movieshelfbackendcore.model.id;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -21,10 +21,10 @@ public class FavoriteId implements Serializable {
     @Serial
     private static final long serialVersionUID = 8609905893415119564L;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "movie_id", nullable = false)
+    @Column(name = "movie_id")
     private Long movieId;
 
     @Override

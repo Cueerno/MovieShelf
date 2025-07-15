@@ -1,12 +1,12 @@
 package com.radiuk.movieshelfbackendcore.model;
 
+import com.radiuk.movieshelfbackendcore.model.id.FavoriteId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 @Getter
@@ -32,8 +32,4 @@ public class Favorite {
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
-
-    @Column(name = "user_rating")
-    private BigDecimal userRating;
-
 }

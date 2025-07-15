@@ -5,6 +5,7 @@ import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
+import com.radiuk.movieshelfbackendcore.model.id.FavoriteId;
 import com.radiuk.movieshelfbackendcore.repository.FavoriteRepository;
 import com.radiuk.movieshelfbackendcore.repository.MovieRatingRepository;
 import com.radiuk.movieshelfbackendcore.repository.MovieRepository;

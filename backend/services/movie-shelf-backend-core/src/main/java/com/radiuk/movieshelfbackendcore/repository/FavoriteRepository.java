@@ -1,7 +1,7 @@
 package com.radiuk.movieshelfbackendcore.repository;
 
 import com.radiuk.movieshelfbackendcore.model.Favorite;
-import com.radiuk.movieshelfbackendcore.model.FavoriteId;
+import com.radiuk.movieshelfbackendcore.model.id.FavoriteId;
 import com.radiuk.movieshelfbackendcore.model.Movie;
 import com.radiuk.movieshelfbackendcore.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
