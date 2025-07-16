@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class RatingDto {
 
-    private Byte score;
+    private Short score;
 }

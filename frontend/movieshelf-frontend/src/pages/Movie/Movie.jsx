@@ -25,20 +25,23 @@ export default function Movie() {
     const [ratingValue, setRatingValue] = useState('');
     const [userRating, setUserRating] = useState(null);
     const [ratingError, setRatingError] = useState('');
+    const [averageRating, setAverageRating] = useState(0);
 
     useEffect(() => {
         setIsLoading(true);
         movieByImdbId(imdbId)
             .then(data => {
                 setMovie(data);
-                setCommentsCount(data.extraMovieInformation.commentsCount);
-                setLikeCount(data.extraMovieInformation.likesCount);
-                setDislikeCount(data.extraMovieInformation.dislikesCount);
-                setUserReaction(data.extraMovieInformation.userReactionType || null);
+                setCommentsCount(data.addtionalMovieInformation.commentsCount);
+                setLikeCount(data.addtionalMovieInformation.likesCount);
+                setDislikeCount(data.addtionalMovieInformation.dislikesCount);
+                setAverageRating(data.addtionalMovieInformation.averageRating);
 
-                if(data.extraMovieInformation.score != null) {
-                    setUserRating(data.extraMovieInformation.score);
-                    setRatingValue(data.extraMovieInformation.score)
+                setUserReaction(data.addtionalMovieInformation.userReactionType || null);
+
+                if(data.addtionalMovieInformation.score != null) {
+                    setUserRating(data.addtionalMovieInformation.score);
+                    setRatingValue(data.addtionalMovieInformation.score)
                 }
             })
             .catch(err => setError(err.message))
@@ -140,8 +143,9 @@ export default function Movie() {
 
     const handleRatingSubmit = async () => {
         try {
-            await addRating(imdbId, { score: Number(ratingValue) });
-            setUserRating(Number(ratingValue));
+            const updated = await addRating(imdbId, { score: Number(ratingValue) });
+            setAverageRating(updated.averageRating);
+            setUserRating(updated.userRating);
             setRatingError('');
         } catch (err) {
             setRatingError(err.message);
@@ -150,7 +154,8 @@ export default function Movie() {
 
     const handleRatingDelete = async () => {
         try {
-            await deleteRating(imdbId);
+            const updated = await deleteRating(imdbId);
+            setAverageRating(updated.averageRating);
             setUserRating(null);
             setRatingValue('');
             setRatingError('');
@@ -174,12 +179,12 @@ export default function Movie() {
                 onError={e => (e.target.src = '/assets/default-movie.png')}
             />
 
-            <h3 style={{ marginTop: '1rem' }}>⭐ Favorited by: {movie.extraMovieInformation.favoriteCount}</h3>
+            <h3 style={{ marginTop: '1rem' }}>⭐ Favorited by: {movie.addtionalMovieInformation.favoriteCount}</h3>
 
             <button
                 onClick={handleToggleFavorite}
                 style={{
-                    backgroundColor: movie.extraMovieInformation.isUserFavorite ? '#e50914' : '#555',
+                    backgroundColor: movie.addtionalMovieInformation.isUserFavorite ? '#e50914' : '#555',
                     color: 'white',
                     padding: '0.6rem 1.2rem',
                     border: 'none',
@@ -193,11 +198,12 @@ export default function Movie() {
                 }}
             >
                 <FaStar/>
-                {movie.extraMovieInformation.isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                {movie.addtionalMovieInformation.isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
             </button>
             {favError && <p style={{color: 'red', marginTop: '0.5rem'}}>❌ {favError}</p>}
 
             <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                <h3>Average: '{averageRating}'</h3>
                 <label htmlFor="ratingInput">Rate (1–100): </label>
                 <input
                     id="ratingInput"
