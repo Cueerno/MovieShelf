@@ -2,7 +2,7 @@ package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.dto.UserDto;
 import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
-import com.radiuk.movieshelfbackendcore.exception.UserNotCreatedException;
+import com.radiuk.movieshelfbackendcore.exception.UserNotUpdatedException;
 import com.radiuk.movieshelfbackendcore.mapper.UserMapper;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
@@ -44,14 +44,25 @@ public class UserService {
         if (userUpdateDto.getUsername() != null) {
             user.setUsername(userUpdateDto.getUsername());
         }
+        else if (userRepository.existsUserByUsername(user.getUsername())) {
+            throw new UserNotUpdatedException("User with this username already exists");
+        }
 
         if (userUpdateDto.getEmail() != null) {
             user.setEmail(userUpdateDto.getEmail());
+        }
+        else if (userRepository.existsUserByEmail(user.getEmail())) {
+            throw new UserNotUpdatedException("User with this email already exists");
         }
 
         user.setUpdatedAt(OffsetDateTime.now());
 
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
     }
 
     @Transactional

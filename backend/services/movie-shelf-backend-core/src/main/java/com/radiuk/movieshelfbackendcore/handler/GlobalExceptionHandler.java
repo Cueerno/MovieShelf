@@ -1,6 +1,7 @@
 package com.radiuk.movieshelfbackendcore.handler;
 
 import com.radiuk.movieshelfbackendcore.exception.UserNotCreatedException;
+import com.radiuk.movieshelfbackendcore.exception.UserNotUpdatedException;
 import io.jsonwebtoken.JwtException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -94,7 +95,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserNotCreatedException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotCreated(UserNotCreatedException exception) {
+    public ResponseEntity<ErrorResponse> handleUserNotCreatedException(UserNotCreatedException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorResponse(
+                        OffsetDateTime.now(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        exception.getMessage()
+                )
+        );
+    }
+
+    @ExceptionHandler(UserNotUpdatedException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotUpdatedException(UserNotUpdatedException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorResponse(
                         OffsetDateTime.now(),
