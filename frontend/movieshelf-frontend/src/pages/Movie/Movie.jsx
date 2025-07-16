@@ -119,7 +119,13 @@ export default function Movie() {
 
         action(imdbId)
             .then(() => {
-                setMovie(prev => ({...prev, isUserFavorite: !prev.isUserFavorite}));
+                setMovie(prev => ({
+                    ...prev,
+                    isUserFavorite: !prev.isUserFavorite,
+                    favoriteCount: prev.isUserFavorite
+                    ? prev.favoriteCount - 1
+                    : prev.favoriteCount + 1
+                }));
             })
             .catch(err => setFavError(err.message));
     };
@@ -138,6 +144,9 @@ export default function Movie() {
                 }}
                 onError={e => (e.target.src = '/assets/default-movie.png')}
             />
+
+            <h3 style={{ marginTop: '1rem' }}>⭐ Favorited by: {movie.favoriteCount}</h3>
+
             <button
                 onClick={handleToggleFavorite}
                 style={{

@@ -53,6 +53,7 @@ public class MovieService {
             omdbFullMovieDto.setIsUserFavorite(false);
         }
 
+        omdbFullMovieDto.setFavoriteCount(favoriteRepository.countByMovieImdbId(imdbId));
         omdbFullMovieDto.setCommentsCount(commentRepository.countByMovieImdbId(imdbId));
         omdbFullMovieDto.setLikesCount(reactionRepository.countByMovieImdbIdAndReactionType(imdbId, Reaction.ReactionType.LIKE));
         omdbFullMovieDto.setDislikesCount(reactionRepository.countByMovieImdbIdAndReactionType(imdbId, Reaction.ReactionType.DISLIKE));

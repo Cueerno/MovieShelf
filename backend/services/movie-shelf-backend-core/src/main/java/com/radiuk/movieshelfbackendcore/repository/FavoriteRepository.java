@@ -21,4 +21,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, FavoriteId> 
     void deleteByUserAndMovie(User user, Movie movie);
 
     boolean existsByMovie(Movie movie);
+
+    long countByMovieImdbId(String imdbId);
 }
