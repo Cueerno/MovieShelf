@@ -90,4 +90,8 @@ public class OmdbFullMovieDto {
     private Boolean isUserFavorite;
 
     private long commentsCount;
+
+    private long likesCount;
+
+    private long dislikesCount;
 }

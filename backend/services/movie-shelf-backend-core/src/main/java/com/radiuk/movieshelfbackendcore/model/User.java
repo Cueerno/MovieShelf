@@ -55,6 +55,13 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    private Set<Reaction> reactions = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
     public enum Role {

@@ -83,5 +83,11 @@ public class Movie {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
+    private Set<Reaction> reactions = new HashSet<>();
+
+    @OneToMany(mappedBy = "movie",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 }

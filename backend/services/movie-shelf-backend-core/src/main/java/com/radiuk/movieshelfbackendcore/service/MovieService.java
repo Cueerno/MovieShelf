@@ -32,6 +32,7 @@ public class MovieService {
     private final FavoriteRepository favoriteRepository;
     private final MovieRatingRepository movieRatingRepository;
     private final CommentRepository commentRepository;
+    private final ReactionRepository reactionRepository;
     private final MovieMapper movieMapper;
 
     public OmdbSearchResponse searchByTitle(String query, Short year, String type, Byte page) {
@@ -57,6 +58,8 @@ public class MovieService {
         }
 
         omdbFullMovieDto.setCommentsCount(commentRepository.countByMovieImdbId(imdbId));
+        omdbFullMovieDto.setLikesCount(reactionRepository.countByMovieImdbIdAndReactionType(imdbId, Reaction.ReactionType.LIKE));
+        omdbFullMovieDto.setDislikesCount(reactionRepository.countByMovieImdbIdAndReactionType(imdbId, Reaction.ReactionType.DISLIKE));
 
         return omdbFullMovieDto;
     }

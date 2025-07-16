@@ -1,10 +1,11 @@
 import {useParams} from 'react-router-dom';
 import {useEffect, useState} from 'react';
-import {movieByImdbId} from "../../api/movie";
-import {addToFavorites, deleteFromFavorites} from "../../api/favorites";
-import {FaStar} from "react-icons/fa";
+import {movieByImdbId} from '../../api/movie';
+import {addToFavorites, deleteFromFavorites} from '../../api/favorites';
+import {addReaction, deleteReaction} from '../../api/reaction';
+import {FaStar} from 'react-icons/fa';
 import {useGlobalLoading} from '../../context/LoadingContext';
-import CommentSection from '../../components/comment/CommentSection'
+import CommentSection from '../../components/comment/CommentSection';
 
 export default function Movie() {
     const {imdbId} = useParams();
@@ -15,40 +16,113 @@ export default function Movie() {
     const [showComments, setShowComments] = useState(false);
     const [commentsCount, setCommentsCount] = useState(0);
 
+    const [likeCount, setLikeCount] = useState(0);
+    const [dislikeCount, setDislikeCount] = useState(0);
+    const [userReaction, setUserReaction] = useState(null);
+    const [reactionError, setReactionError] = useState('');
+
     useEffect(() => {
         setIsLoading(true);
         movieByImdbId(imdbId)
             .then(data => {
                 setMovie(data);
                 setCommentsCount(data.commentsCount);
+                setLikeCount(data.likesCount);
+                setDislikeCount(data.dislikesCount);
+                setUserReaction(data.userReactionType || null);
             })
-            .catch((err) => setError(err.message))
+            .catch(err => setError(err.message))
             .finally(() => setIsLoading(false));
     }, [imdbId]);
 
     useEffect(() => {
         if (movie) {
-            document.title = `${movie.title}`;
+            document.title = movie.title;
         }
     }, [movie]);
 
-
-
     if (error) return <p style={{color: 'red'}}>❌ {error}</p>;
+    if (!movie) return null;
+
+    const handleLike = async () => {
+        try {
+            if (userReaction === 'LIKE') {
+                await deleteReaction(imdbId);
+                setLikeCount(prev => prev - 1);
+                setUserReaction(null);
+                setMovie(prev => ({
+                    ...prev,
+                    userReactionType: null,
+                    likesCount: prev.likesCount - 1
+                }));
+                return;
+            }
+
+            if (userReaction === 'DISLIKE') {
+                await deleteReaction(imdbId);
+                setDislikeCount(prev => prev - 1);
+            }
+
+            await addReaction(imdbId, { reactionType: 'LIKE' });
+            setLikeCount(prev => prev + 1);
+            setUserReaction('LIKE');
+
+            setMovie(prev => ({
+                ...prev,
+                userReactionType: 'LIKE',
+                likesCount: prev.likesCount + 1,
+                dislikesCount: userReaction === 'DISLIKE' ? prev.dislikesCount - 1 : prev.dislikesCount,
+            }));
+        } catch (err) {
+            setReactionError(err.message);
+        }
+    };
+
+
+    const handleDislike = async () => {
+        try {
+            if (userReaction === 'DISLIKE') {
+                await deleteReaction(imdbId);
+                setDislikeCount(prev => prev - 1);
+                setUserReaction(null);
+                setMovie(prev => ({
+                    ...prev,
+                    userReactionType: null,
+                    dislikesCount: prev.dislikesCount - 1
+                }));
+                return;
+            }
+
+            if (userReaction === 'LIKE') {
+                await deleteReaction(imdbId);
+                setLikeCount(prev => prev - 1);
+            }
+
+            await addReaction(imdbId, { reactionType: 'DISLIKE' });
+            setDislikeCount(prev => prev + 1);
+            setUserReaction('DISLIKE');
+
+            setMovie(prev => ({
+                ...prev,
+                userReactionType: 'DISLIKE',
+                dislikesCount: prev.dislikesCount + 1,
+                likesCount: userReaction === 'LIKE' ? prev.likesCount - 1 : prev.likesCount,
+            }));
+        } catch (err) {
+            setReactionError(err.message);
+        }
+    };
+
 
     const handleToggleFavorite = () => {
-        if (!imdbId) return;
-
         const action = movie.isUserFavorite ? deleteFromFavorites : addToFavorites;
 
         action(imdbId)
             .then(() => {
-                setMovie((prev) => ({...prev, isUserFavorite: !prev.isIserFavorite}));
+                setMovie(prev => ({...prev, isUserFavorite: !prev.isUserFavorite}));
             })
-            .catch((err) => setFavError(err.message));
-    }
-
-    if (!movie && !error) return null;
+            .catch(err => setFavError(err.message));
+    };
 
     return (<div style={{padding: '2rem', display: 'flex', gap: '2rem', alignItems: 'flex-start'}}>
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -60,9 +134,9 @@ export default function Movie() {
                     height: '320px',
                     objectFit: 'cover',
                     borderRadius: '8px',
-                    boxShadow: '0 0 10px rgba(0,0,0,0.2)'
+                    boxShadow: '0 0 10px rgba(0,0,0,0.2)',
                 }}
-                onError={(e) => (e.target.src = '/assets/default-movie.png')}
+                onError={e => (e.target.src = '/assets/default-movie.png')}
             />
             <button
                 onClick={handleToggleFavorite}
@@ -77,7 +151,7 @@ export default function Movie() {
                     alignItems: 'center',
                     gap: '0.5rem',
                     fontWeight: 'bold',
-                    marginTop: '1rem'
+                    marginTop: '1rem',
                 }}
             >
                 <FaStar/>
@@ -116,24 +190,61 @@ export default function Movie() {
                     </li>))}
                 </ul>
             </div>
-            <button onClick={() => setShowComments(prev => !prev)} style={{
-                backgroundColor: '#eee',
-                border: 'none',
-                padding: '0.5rem 1rem',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                fontWeight: '500',
-                marginTop: '1rem'
-            }}>
+
+            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem'}}>
+                <button
+                    onClick={handleLike}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: userReaction === 'LIKE' ? '#007bff' : '#666',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        fontSize: '1.1rem',
+                    }}
+                >
+                    👍 {likeCount}
+                </button>
+
+                <button
+                    onClick={handleDislike}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: userReaction === 'DISLIKE' ? '#007bff' : '#666',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.25rem',
+                        fontSize: '1.1rem',
+                    }}
+                >
+                    👎 {dislikeCount}
+                </button>
+
+                {reactionError && <p style={{color: 'red'}}>❌ {reactionError}</p>}
+            </div>
+
+            <button
+                onClick={() => setShowComments(prev => !prev)}
+                style={{
+                    backgroundColor: '#eee',
+                    border: 'none',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    fontWeight: '500',
+                    marginTop: '1rem',
+                }}
+            >
                 💬 Comments {commentsCount > 0 && `(${commentsCount})`}
             </button>
 
-            {showComments && (
-                <div style={{marginTop: '1.5rem'}}>
-                    <CommentSection imdbId={imdbId} setCommentsCount={setCommentsCount} />
-                </div>
-            )}
-
+            {showComments && (<div style={{marginTop: '1.5rem'}}>
+                <CommentSection imdbId={imdbId} setCommentsCount={setCommentsCount}/>
+            </div>)}
         </div>
     </div>);
 }
