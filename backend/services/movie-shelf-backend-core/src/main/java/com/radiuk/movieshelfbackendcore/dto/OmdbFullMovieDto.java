@@ -87,13 +87,5 @@ public class OmdbFullMovieDto {
     @JsonAlias("Website")
     private String website;
 
-    private Boolean isUserFavorite;
-
-    private long favoriteCount;
-
-    private long commentsCount;
-
-    private long likesCount;
-
-    private long dislikesCount;
+    private AddtionalMovieInformation addtionalMovieInformation;
 }

@@ -1,5 +1,6 @@
 package com.radiuk.movieshelfbackendcore.repository;
 
+import com.radiuk.movieshelfbackendcore.dto.AddtionalMovieInformation;
 import com.radiuk.movieshelfbackendcore.model.Movie;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -33,4 +34,16 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     """)
     List<Movie> findTopMoviesFavoritedByMultipleUsers(Pageable pageable);
 
+    @Query(value = """
+    select
+        (select exists(select 1 from favorites where movie_id = m.id)) is_favorite,
+        (select count(*) from favorites where movie_id = m.id) favorites_count,
+        (select cast(avg(score) as smallint) from rating where movie_id = m.id) average_rating,
+        (select count(*) from comment where movie_id = m.id) comments_count,
+        (select count(*) from reaction where movie_id = m.id and like_type = 'LIKE') likes_count,
+        (select count(*) from reaction where movie_id = m.id and like_type = 'DISLIKE') dislikes_count
+    from movie m
+    where m.imdb_id = :imdbId
+    """, nativeQuery = true)
+    AddtionalMovieInformation findExtraMovieInformationByMovieImdbId(String imdbId);
 }

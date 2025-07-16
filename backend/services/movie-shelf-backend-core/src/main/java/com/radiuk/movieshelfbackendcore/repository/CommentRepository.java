@@ -14,7 +14,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @EntityGraph(attributePaths = "user")
     @Query("select c from Comment c where c.movie.imdbId = :imdbId order by c.createdAt desc")
     List<Comment> findAllByImdbId(String imdbId);
-
-    @Query("select count(c) from Comment c where c.movie.imdbId = :imdbId")
-    long countByMovieImdbId(String imdbId);
 }
