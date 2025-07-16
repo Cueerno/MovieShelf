@@ -1,6 +1,5 @@
 package com.radiuk.movieshelfbackendcore.controller;
 
-
 import com.radiuk.movieshelfbackendcore.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,22 +32,5 @@ public class MovieController {
     @GetMapping("/top")
     public ResponseEntity<?> getTopRatedMovies() {
         return ResponseEntity.ok(movieService.getTopRatedMovies());
-    }
-
-    @PostMapping("/{imdbId}")
-    public ResponseEntity<?> addToFavorites(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
-        movieService.addToFavorites(imdbId, userDetails.getUsername());
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/favorites")
-    public ResponseEntity<?> getFavorites(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(movieService.getFavorites(userDetails.getUsername()));
-    }
-
-    @DeleteMapping("/{imdbId}")
-    public ResponseEntity<?> removeFavorites(@PathVariable String imdbId, @AuthenticationPrincipal UserDetails userDetails) {
-        movieService.removeFromFavorites(imdbId, userDetails.getUsername());
-        return ResponseEntity.noContent().build();
     }
 }
