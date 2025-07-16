@@ -32,7 +32,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentDto saveComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
+    public CommentDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
         Comment comment = commentMapper.commentRequestDtoToComment(commentRequestDto);
 
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);

@@ -25,7 +25,7 @@ public class CommentController {
 
     @PostMapping("/{imdbId}")
     public ResponseEntity<?> addComment(@PathVariable String imdbId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.saveComment(imdbId, commentRequestDto, userDetails.getUsername()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.addComment(imdbId, commentRequestDto, userDetails.getUsername()));
     }
 
     @PutMapping("/{commentId}")
