@@ -2,6 +2,7 @@ package com.radiuk.movieshelfbackendcore.mapper;
 
 
 import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
+import com.radiuk.movieshelfbackendcore.dto.OmdbShortMovieDto;
 import com.radiuk.movieshelfbackendcore.model.Movie;
 import org.mapstruct.Mapper;
 
@@ -14,5 +15,7 @@ public interface MovieMapper {
 
     OmdbFullMovieDto movieToOmdbFullMovieDto(Movie movie);
 
-    List<OmdbFullMovieDto> movieListToOmdbFullMovieDtoList(List<Movie> movies);
+    OmdbShortMovieDto movieToOmdbShortMovieDto(Movie movie);
+
+    List<OmdbShortMovieDto> movieListToOmdbShortMovieDtoList(List<Movie> movies);
 }

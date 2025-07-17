@@ -1,6 +1,7 @@
 package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
+import com.radiuk.movieshelfbackendcore.dto.OmdbShortMovieDto;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.Favorite;
 import com.radiuk.movieshelfbackendcore.model.Movie;
@@ -65,12 +66,12 @@ public class FavoriteService {
     }
 
     @Transactional
-    public List<OmdbFullMovieDto> getFavorites(String username) {
+    public List<OmdbShortMovieDto> getFavorites(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
         return favoriteRepository.findAllByUser(user).stream()
                 .map(Favorite::getMovie)
-                .map(movieMapper::movieToOmdbFullMovieDto)
+                .map(movieMapper::movieToOmdbShortMovieDto)
                 .toList();
     }
 

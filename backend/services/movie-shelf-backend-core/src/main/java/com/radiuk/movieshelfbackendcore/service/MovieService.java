@@ -4,6 +4,7 @@ import com.radiuk.movieshelfbackendcore.client.OmdbClient;
 import com.radiuk.movieshelfbackendcore.dto.AdditionalMovieInformation;
 import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
+import com.radiuk.movieshelfbackendcore.dto.OmdbShortMovieDto;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
 import com.radiuk.movieshelfbackendcore.repository.*;
@@ -47,20 +48,20 @@ public class MovieService {
             Movie movie = optionalMovie.get();
 
             omdbFullMovieDto = movieMapper.movieToOmdbFullMovieDto(movie);
+
+            additionalMovieInformation = movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId);
             additionalMovieInformation.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
+            omdbFullMovieDto.setAdditionalMovieInformation(additionalMovieInformation);
         } else {
             omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
             additionalMovieInformation.setIsUserFavorite(false);
         }
 
-
-        omdbFullMovieDto.setAdditionalMovieInformation(movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId));
-
         return omdbFullMovieDto;
     }
 
-    public List<OmdbFullMovieDto> getTopRatedMovies() {
+    public List<OmdbShortMovieDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
-        return movieMapper.movieListToOmdbFullMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
+        return movieMapper.movieListToOmdbShortMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
     }
 }

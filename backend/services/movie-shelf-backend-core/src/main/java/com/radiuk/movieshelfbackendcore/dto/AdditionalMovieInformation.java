@@ -11,13 +11,13 @@ public class AdditionalMovieInformation {
 
     private Boolean isUserFavorite;
 
-    private long favoriteCount;
+    private Long favoriteCount;
 
-    private short averageRating;
+    private Short averageRating;
 
-    private long commentsCount;
+    private Long commentsCount;
 
-    private long likesCount;
+    private Long likesCount;
 
-    private long dislikesCount;
+    private Long dislikesCount;
 }
