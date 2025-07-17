@@ -1,6 +1,6 @@
 package com.radiuk.movieshelfbackendcore.repository;
 
-import com.radiuk.movieshelfbackendcore.dto.AddtionalMovieInformation;
+import com.radiuk.movieshelfbackendcore.dto.AdditionalMovieInformation;
 import com.radiuk.movieshelfbackendcore.model.Movie;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -45,5 +45,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     from movie m
     where m.imdb_id = :imdbId
     """, nativeQuery = true)
-    AddtionalMovieInformation findExtraMovieInformationByMovieImdbId(String imdbId);
+    AdditionalMovieInformation findAdditionalMovieInformationByMovieImdbId(String imdbId);
 }

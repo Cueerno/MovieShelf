@@ -1,6 +1,6 @@
 package com.radiuk.movieshelfbackendcore.service;
 
-import com.radiuk.movieshelfbackendcore.dto.CommentDto;
+import com.radiuk.movieshelfbackendcore.dto.CommentResponseDto;
 import com.radiuk.movieshelfbackendcore.dto.CommentRequestDto;
 import com.radiuk.movieshelfbackendcore.mapper.CommentMapper;
 import com.radiuk.movieshelfbackendcore.model.Comment;
@@ -27,12 +27,12 @@ public class CommentService {
     private final UserRepository userRepository;
     private final CommentMapper commentMapper;
 
-    public List<CommentDto> findAllCommentsByMovie(String imdbId) {
+    public List<CommentResponseDto> findAllCommentsByMovie(String imdbId) {
         return commentMapper.toDtoList(commentRepository.findAllByImdbId(imdbId));
     }
 
     @Transactional
-    public CommentDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
+    public CommentResponseDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
         Comment comment = commentMapper.commentRequestDtoToComment(commentRequestDto);
 
         User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
@@ -49,14 +49,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void updateComment(Long commentId, CommentDto commentDto, String username) {
+    public void updateComment(Long commentId, CommentResponseDto commentResponseDto, String username) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
 
         if (!comment.getUser().getUsername().equals(username)) {
             throw new AccessDeniedException("You can't edit someone else's comment.");
         }
 
-        comment.setText(commentDto.getText());
+        comment.setText(commentResponseDto.getText());
         comment.setUpdatedAt(OffsetDateTime.now());
 
         commentRepository.save(comment);

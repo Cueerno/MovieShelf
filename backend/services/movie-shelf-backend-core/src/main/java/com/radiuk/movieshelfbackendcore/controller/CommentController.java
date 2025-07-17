@@ -1,6 +1,6 @@
 package com.radiuk.movieshelfbackendcore.controller;
 
-import com.radiuk.movieshelfbackendcore.dto.CommentDto;
+import com.radiuk.movieshelfbackendcore.dto.CommentResponseDto;
 import com.radiuk.movieshelfbackendcore.dto.CommentRequestDto;
 import com.radiuk.movieshelfbackendcore.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody CommentDto commentDto, @AuthenticationPrincipal UserDetails userDetails) {
-        commentService.updateComment(commentId, commentDto, userDetails.getUsername());
+    public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody CommentResponseDto commentResponseDto, @AuthenticationPrincipal UserDetails userDetails) {
+        commentService.updateComment(commentId, commentResponseDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 

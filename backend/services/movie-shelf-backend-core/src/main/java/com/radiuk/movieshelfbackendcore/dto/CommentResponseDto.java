@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDto {
+public class CommentResponseDto {
 
     private Long id;
 

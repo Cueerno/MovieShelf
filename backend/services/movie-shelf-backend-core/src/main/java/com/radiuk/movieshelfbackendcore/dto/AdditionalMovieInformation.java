@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddtionalMovieInformation {
+public class AdditionalMovieInformation {
 
     private Boolean isUserFavorite;
 

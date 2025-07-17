@@ -58,7 +58,7 @@ public class OmdbFullMovieDto {
     private String poster;
 
     @JsonAlias("Ratings")
-    private List<MovieRatingDto> ratings;
+    private List<OmdbMovieRatingDto> ratings;
 
     @JsonAlias("Metascore")
     private String metascore;
@@ -87,5 +87,5 @@ public class OmdbFullMovieDto {
     @JsonAlias("Website")
     private String website;
 
-    private AddtionalMovieInformation addtionalMovieInformation;
+    private AdditionalMovieInformation additionalMovieInformation;
 }

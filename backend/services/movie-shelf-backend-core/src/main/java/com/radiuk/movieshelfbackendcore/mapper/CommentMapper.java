@@ -1,6 +1,6 @@
 package com.radiuk.movieshelfbackendcore.mapper;
 
-import com.radiuk.movieshelfbackendcore.dto.CommentDto;
+import com.radiuk.movieshelfbackendcore.dto.CommentResponseDto;
 import com.radiuk.movieshelfbackendcore.dto.CommentRequestDto;
 import com.radiuk.movieshelfbackendcore.model.Comment;
 import org.mapstruct.Mapper;
@@ -12,9 +12,9 @@ import java.util.List;
 public interface CommentMapper {
 
     @Mapping(source = "user.username", target = "username")
-    CommentDto commentToCommentDto(Comment comment);
+    CommentResponseDto commentToCommentDto(Comment comment);
 
-    List<CommentDto> toDtoList(List<Comment> comments);
+    List<CommentResponseDto> toDtoList(List<Comment> comments);
 
     Comment commentRequestDtoToComment(CommentRequestDto commentRequestDto);
 }

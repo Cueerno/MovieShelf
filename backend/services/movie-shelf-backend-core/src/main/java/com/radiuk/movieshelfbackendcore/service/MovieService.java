@@ -1,7 +1,7 @@
 package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
-import com.radiuk.movieshelfbackendcore.dto.AddtionalMovieInformation;
+import com.radiuk.movieshelfbackendcore.dto.AdditionalMovieInformation;
 import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
 import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
@@ -41,20 +41,20 @@ public class MovieService {
         Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 
         OmdbFullMovieDto omdbFullMovieDto;
-        AddtionalMovieInformation addtionalMovieInformation = new AddtionalMovieInformation();
+        AdditionalMovieInformation additionalMovieInformation = new AdditionalMovieInformation();
 
         if (optionalMovie.isPresent()) {
             Movie movie = optionalMovie.get();
 
             omdbFullMovieDto = movieMapper.movieToOmdbFullMovieDto(movie);
-            addtionalMovieInformation.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
+            additionalMovieInformation.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
         } else {
             omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
-            addtionalMovieInformation.setIsUserFavorite(false);
+            additionalMovieInformation.setIsUserFavorite(false);
         }
 
 
-        omdbFullMovieDto.setAddtionalMovieInformation(movieRepository.findExtraMovieInformationByMovieImdbId(imdbId));
+        omdbFullMovieDto.setAdditionalMovieInformation(movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId));
 
         return omdbFullMovieDto;
     }
