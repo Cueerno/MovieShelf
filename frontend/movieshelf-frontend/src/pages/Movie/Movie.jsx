@@ -27,26 +27,29 @@ export default function Movie() {
     const [ratingError, setRatingError] = useState('');
     const [averageRating, setAverageRating] = useState(0);
 
+    const info = movie?.additionalMovieInformation ?? {};
+
     useEffect(() => {
         setIsLoading(true);
         movieByImdbId(imdbId)
             .then(data => {
                 setMovie(data);
-                setCommentsCount(data.addtionalMovieInformation.commentsCount);
-                setLikeCount(data.addtionalMovieInformation.likesCount);
-                setDislikeCount(data.addtionalMovieInformation.dislikesCount);
-                setAverageRating(data.addtionalMovieInformation.averageRating);
 
-                setUserReaction(data.addtionalMovieInformation.userReactionType || null);
+                setCommentsCount(info.commentsCount ?? 0);
+                setLikeCount(info.likesCount ?? 0);
+                setDislikeCount(info.dislikesCount ?? 0);
+                setAverageRating(info.averageRating ?? 0);
+                setUserReaction(info.userReactionType ?? null);
 
-                if(data.addtionalMovieInformation.score != null) {
-                    setUserRating(data.addtionalMovieInformation.score);
-                    setRatingValue(data.addtionalMovieInformation.score)
+                if (info.score != null) {
+                    setUserRating(info.score);
+                    setRatingValue(info.score);
                 }
             })
             .catch(err => setError(err.message))
             .finally(() => setIsLoading(false));
     }, [imdbId]);
+
 
     useEffect(() => {
         if (movie) {
@@ -126,7 +129,7 @@ export default function Movie() {
     };
 
     const handleToggleFavorite = () => {
-        const action = movie.extraMovieInformation.isUserFavorite ? deleteFromFavorites : addToFavorites;
+        const action = info.isUserFavorite ? deleteFromFavorites : addToFavorites;
 
         action(imdbId)
             .then(() => {
@@ -179,12 +182,12 @@ export default function Movie() {
                 onError={e => (e.target.src = '/assets/default-movie.png')}
             />
 
-            <h3 style={{ marginTop: '1rem' }}>⭐ Favorited by: {movie.addtionalMovieInformation.favoriteCount}</h3>
+            <h3 style={{ marginTop: '1rem' }}>⭐ Favorited by: {info.favoriteCount}</h3>
 
             <button
                 onClick={handleToggleFavorite}
                 style={{
-                    backgroundColor: movie.addtionalMovieInformation.isUserFavorite ? '#e50914' : '#555',
+                    backgroundColor: info.isUserFavorite ? '#e50914' : '#555',
                     color: 'white',
                     padding: '0.6rem 1.2rem',
                     border: 'none',
@@ -198,7 +201,7 @@ export default function Movie() {
                 }}
             >
                 <FaStar/>
-                {movie.addtionalMovieInformation.isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                {info.isUserFavorite ? 'Remove from favorites' : 'Add to favorites'}
             </button>
             {favError && <p style={{color: 'red', marginTop: '0.5rem'}}>❌ {favError}</p>}
 
