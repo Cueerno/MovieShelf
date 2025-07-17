@@ -2,8 +2,7 @@ package com.radiuk.movieshelfbackendcore.model;
 
 import com.radiuk.movieshelfbackendcore.model.id.FavoriteId;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,6 +12,9 @@ import java.time.OffsetDateTime;
 @Setter
 @Entity
 @Table(name = "favorites")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Favorite {
     @EmbeddedId
     private FavoriteId id;

@@ -26,6 +26,7 @@ public class CommentService {
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;
     private final CommentMapper commentMapper;
+    private final MovieService movieService;
 
     public List<CommentResponseDto> findAllCommentsByMovie(String imdbId) {
         return commentMapper.toDtoList(commentRepository.findAllByImdbId(imdbId));
@@ -35,8 +36,8 @@ public class CommentService {
     public CommentResponseDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
         Comment comment = commentMapper.commentRequestDtoToComment(commentRequestDto);
 
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-        Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.getByUsername(username);
+        Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         comment.setUser(user);
         comment.setMovie(movie);

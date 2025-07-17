@@ -24,11 +24,12 @@ public class RatingService {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
     private final RatingMapper ratingMapper;
+    private final MovieService movieService;
 
     @Transactional
     public RatingDto addRating(String imdbId, RatingDto ratingDto, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-        Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.getByUsername(username);
+        Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         RatingId id = new RatingId(user.getId(), movie.getId());
 
@@ -51,7 +52,7 @@ public class RatingService {
 
     @Transactional
     public void deleteRatting(String imdbId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.getByUsername(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         ratingRepository.deleteById(new RatingId(user.getId(), movie.getId()));

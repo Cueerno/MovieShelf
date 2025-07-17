@@ -1,14 +1,10 @@
 package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
-import com.radiuk.movieshelfbackendcore.dto.AdditionalMovieInformation;
-import com.radiuk.movieshelfbackendcore.dto.OmdbFullMovieDto;
-import com.radiuk.movieshelfbackendcore.dto.OmdbSearchResponse;
-import com.radiuk.movieshelfbackendcore.dto.OmdbShortMovieDto;
+import com.radiuk.movieshelfbackendcore.dto.*;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
 import com.radiuk.movieshelfbackendcore.repository.*;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +25,7 @@ public class MovieService {
     private final OmdbClient omdbClient;
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;
+    private final MovieRatingRepository movieRatingRepository;
     private final FavoriteRepository favoriteRepository;
     private final MovieMapper movieMapper;
 
@@ -36,32 +33,58 @@ public class MovieService {
         return omdbClient.searchMovies(API_KEY, query, year, type, page);
     }
 
-    @Transactional
-    public OmdbFullMovieDto findByImdbId(String imdbId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-        Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
+    @Transactional(readOnly = true)
+    public MovieDto findByImdbId(String imdbId, String username) {
+        Optional<User> user = userRepository.findByUsername(username);
 
-        OmdbFullMovieDto omdbFullMovieDto;
-        AdditionalMovieInformation additionalMovieInformation = new AdditionalMovieInformation();
+        Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 
         if (optionalMovie.isPresent()) {
             Movie movie = optionalMovie.get();
+            MovieDto dto = movieMapper.movieToMovieDto(movie);
 
-            omdbFullMovieDto = movieMapper.movieToOmdbFullMovieDto(movie);
+            AdditionalMovieInformation info =
+                    movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId);
+            info.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user.get(), movie));
+            dto.setAdditionalMovieInformation(info);
 
-            additionalMovieInformation = movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId);
-            additionalMovieInformation.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user, movie));
-            omdbFullMovieDto.setAdditionalMovieInformation(additionalMovieInformation);
-        } else {
-            omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
-            additionalMovieInformation.setIsUserFavorite(false);
+            return dto;
         }
 
-        return omdbFullMovieDto;
+        OmdbFullMovieDto omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
+        return movieMapper.omdbFullMovieDtoToMovieDto(omdbFullMovieDto);
     }
 
-    public List<OmdbShortMovieDto> getTopRatedMovies() {
+    @Transactional
+    public Movie getOrCreateMovie(String imdbId) {
+        return movieRepository.findByImdbId(imdbId)
+                .orElseGet(() -> fetchAndPersistMovie(imdbId));
+    }
+
+    private Movie fetchAndPersistMovie(String imdbId) {
+        OmdbFullMovieDto omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
+
+        Movie movie = movieMapper.omdbFullMovieDtoToMovie(omdbFullMovieDto);
+        movie =  movieRepository.save(movie);
+
+        if (omdbFullMovieDto.getRatings() != null && !omdbFullMovieDto.getRatings().isEmpty()) {
+            Movie finalMovie = movie;
+            List<MovieRating> ratings = omdbFullMovieDto.getRatings().stream()
+                    .map(r -> MovieRating.builder()
+                            .movie(finalMovie)
+                            .source(r.getSource())
+                            .value(r.getValue())
+                            .build())
+                    .toList();
+
+            movieRatingRepository.saveAll(ratings);
+        }
+
+        return movie;
+    }
+
+    public List<MovieDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
-        return movieMapper.movieListToOmdbShortMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
+        return movieMapper.movieListToMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
     }
 }

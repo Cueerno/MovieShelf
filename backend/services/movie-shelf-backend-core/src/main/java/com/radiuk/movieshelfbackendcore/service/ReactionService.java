@@ -24,11 +24,12 @@ public class ReactionService {
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;
     private final ReactionMapper reactionMapper;
+    private final MovieService movieService;
 
     @Transactional
     public ReactionDto addReaction(String imdbId, ReactionDto reactionDto, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-        Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.getByUsername(username);
+        Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         ReactionId id = new ReactionId(user.getId(), movie.getId());
 
@@ -51,7 +52,7 @@ public class ReactionService {
 
     @Transactional
     public void deleteReaction(String imdbId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.getByUsername(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         reactionRepository.deleteById(new ReactionId(user.getId(), movie.getId()));
