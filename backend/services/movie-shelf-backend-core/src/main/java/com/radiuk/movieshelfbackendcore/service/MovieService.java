@@ -3,6 +3,7 @@ package com.radiuk.movieshelfbackendcore.service;
 import com.radiuk.movieshelfbackendcore.client.OmdbClient;
 import com.radiuk.movieshelfbackendcore.dto.*;
 import com.radiuk.movieshelfbackendcore.mapper.MovieMapper;
+import com.radiuk.movieshelfbackendcore.mapper.OmdbMovieMapper;
 import com.radiuk.movieshelfbackendcore.model.*;
 import com.radiuk.movieshelfbackendcore.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +27,8 @@ public class MovieService {
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;
     private final MovieRatingRepository movieRatingRepository;
-    private final FavoriteRepository favoriteRepository;
     private final MovieMapper movieMapper;
+    private final OmdbMovieMapper omdbMovieMapper;
 
     public OmdbSearchResponse searchByTitle(String query, Short year, String type, Byte page) {
         return omdbClient.searchMovies(API_KEY, query, year, type, page);
@@ -35,7 +36,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public MovieDto findByImdbId(String imdbId, String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = userRepository.getByUsername(username);
 
         Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 
@@ -43,16 +44,19 @@ public class MovieService {
             Movie movie = optionalMovie.get();
             MovieDto dto = movieMapper.movieToMovieDto(movie);
 
-            AdditionalMovieInformation info =
-                    movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId);
-            info.setIsUserFavorite(favoriteRepository.existsByUserAndMovie(user.get(), movie));
+            AdditionalMovieInformation info = movieRepository.findAdditionalMovieInformationByMovieImdbId(imdbId, user.getId());
+
+            if (info.getAverageRating() == null) {
+                info.setAverageRating((short) 0);
+            }
+
             dto.setAdditionalMovieInformation(info);
 
             return dto;
         }
 
         OmdbFullMovieDto omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
-        return movieMapper.omdbFullMovieDtoToMovieDto(omdbFullMovieDto);
+        return omdbMovieMapper.omdbFullMovieDtoToMovieDto(omdbFullMovieDto);
     }
 
     @Transactional
@@ -64,7 +68,7 @@ public class MovieService {
     private Movie fetchAndPersistMovie(String imdbId) {
         OmdbFullMovieDto omdbFullMovieDto = omdbClient.getMovieByImdbId(API_KEY, imdbId);
 
-        Movie movie = movieMapper.omdbFullMovieDtoToMovie(omdbFullMovieDto);
+        Movie movie = omdbMovieMapper.omdbFullMovieDtoToMovie(omdbFullMovieDto);
         movie =  movieRepository.save(movie);
 
         if (omdbFullMovieDto.getRatings() != null && !omdbFullMovieDto.getRatings().isEmpty()) {

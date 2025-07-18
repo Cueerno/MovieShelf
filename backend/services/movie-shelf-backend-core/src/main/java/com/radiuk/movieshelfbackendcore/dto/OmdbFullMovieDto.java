@@ -86,6 +86,4 @@ public class OmdbFullMovieDto {
 
     @JsonAlias("Website")
     private String website;
-
-    private AdditionalMovieInformation additionalMovieInformation;
 }

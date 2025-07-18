@@ -36,7 +36,7 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
 
     @Query(value = """
     select
-        (select exists(select 1 from favorites where movie_id = m.id)) is_favorite,
+        (select exists(select 1 from favorites where movie_id = m.id and user_id = :userId)) is_favorite,
         (select count(*) from favorites where movie_id = m.id) favorites_count,
         (select cast(avg(score) as smallint) from rating where movie_id = m.id) average_rating,
         (select count(*) from comment where movie_id = m.id) comments_count,
@@ -45,5 +45,5 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
     from movie m
     where m.imdb_id = :imdbId
     """, nativeQuery = true)
-    AdditionalMovieInformation findAdditionalMovieInformationByMovieImdbId(String imdbId);
+    AdditionalMovieInformation findAdditionalMovieInformationByMovieImdbId(String imdbId, Long userId);
 }
