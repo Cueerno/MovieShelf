@@ -8,7 +8,6 @@ import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.model.id.RatingId;
 import com.radiuk.movieshelfbackendcore.repository.MovieRepository;
 import com.radiuk.movieshelfbackendcore.repository.RatingRepository;
-import com.radiuk.movieshelfbackendcore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,14 +20,14 @@ import java.time.OffsetDateTime;
 public class RatingService {
 
     private final RatingRepository ratingRepository;
-    private final UserRepository userRepository;
     private final MovieRepository movieRepository;
     private final RatingMapper ratingMapper;
     private final MovieService movieService;
+    private final UserCacheService userCacheService;
 
     @Transactional
     public RatingDto addRating(String imdbId, RatingDto ratingDto, String username) {
-        User user = userRepository.getByUsername(username);
+        User user = userCacheService.getUserEntity(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         RatingId id = new RatingId(user.getId(), movie.getId());
@@ -52,7 +51,7 @@ public class RatingService {
 
     @Transactional
     public void deleteRatting(String imdbId, String username) {
-        User user = userRepository.getByUsername(username);
+        User user = userCacheService.getUserEntity(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         ratingRepository.deleteById(new RatingId(user.getId(), movie.getId()));

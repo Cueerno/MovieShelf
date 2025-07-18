@@ -25,10 +25,10 @@ public class MovieService {
 
     private final OmdbClient omdbClient;
     private final MovieRepository movieRepository;
-    private final UserRepository userRepository;
     private final MovieRatingRepository movieRatingRepository;
     private final MovieMapper movieMapper;
     private final OmdbMovieMapper omdbMovieMapper;
+    private final UserCacheService userCacheService;
 
     public OmdbSearchResponse searchByTitle(String query, Short year, String type, Byte page) {
         return omdbClient.searchMovies(API_KEY, query, year, type, page);
@@ -36,7 +36,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public MovieDto findByImdbId(String imdbId, String username) {
-        User user = userRepository.getByUsername(username);
+        User user = userCacheService.getUserEntity(username);
 
         Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 

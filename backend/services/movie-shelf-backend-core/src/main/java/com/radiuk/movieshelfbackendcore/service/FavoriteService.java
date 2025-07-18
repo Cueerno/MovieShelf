@@ -20,14 +20,14 @@ import java.util.List;
 public class FavoriteService {
 
     private final MovieRepository movieRepository;
-    private final UserRepository userRepository;
     private final FavoriteRepository favoriteRepository;
     private final MovieMapper movieMapper;
     private final MovieService movieService;
+    private final UserCacheService userCacheService;
 
     @Transactional
     public void addToFavorites(String imdbId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userCacheService.getUserEntity(username);
 
         Movie movie = movieService.getOrCreateMovie(imdbId);
 
@@ -47,7 +47,7 @@ public class FavoriteService {
 
     @Transactional
     public List<MovieDto> getFavorites(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user = userCacheService.getUserEntity(username);
 
         return favoriteRepository.findAllByUser(user).stream()
                 .map(Favorite::getMovie)
@@ -57,7 +57,7 @@ public class FavoriteService {
 
     @Transactional
     public void removeFromFavorites(String imdbId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        User user =  userCacheService.getUserEntity(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         favoriteRepository.deleteByUserAndMovie(user, movie);

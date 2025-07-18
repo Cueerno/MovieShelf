@@ -8,7 +8,6 @@ import com.radiuk.movieshelfbackendcore.model.Movie;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.CommentRepository;
 import com.radiuk.movieshelfbackendcore.repository.MovieRepository;
-import com.radiuk.movieshelfbackendcore.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -24,9 +23,9 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final MovieRepository movieRepository;
-    private final UserRepository userRepository;
     private final CommentMapper commentMapper;
     private final MovieService movieService;
+    private final UserCacheService userCacheService;
 
     public List<CommentResponseDto> findAllCommentsByMovie(String imdbId) {
         return commentMapper.toDtoList(commentRepository.findAllByImdbId(imdbId));
@@ -36,7 +35,7 @@ public class CommentService {
     public CommentResponseDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
         Comment comment = commentMapper.commentRequestDtoToComment(commentRequestDto);
 
-        User user = userRepository.getByUsername(username);
+        User user = userCacheService.getUserEntity(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         comment.setUser(user);
