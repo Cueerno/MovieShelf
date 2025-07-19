@@ -39,9 +39,8 @@ public class UserService {
     }
 
     @Transactional
-    @CacheEvict(value = "users", key = "#username")
     public void update(String username, UserUpdateDto userUpdateDto) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userRepository.getByUsername(username);
 
         if (userUpdateDto.getUsername() != null) {
             user.setUsername(userUpdateDto.getUsername());
@@ -60,22 +59,25 @@ public class UserService {
         user.setUpdatedAt(OffsetDateTime.now());
 
         userRepository.save(user);
+        userCacheService.evictUser(username);
     }
 
     @Transactional
     public void deleteByUsername(String username) {
         userRepository.deleteByUsername(username);
+        userCacheService.evictUser(username);
     }
 
     @Transactional
     public String updateAvatarUrl(String username, MultipartFile file) throws IOException {
-        User user = userCacheService.getUserEntity(username);
+        User user = userRepository.getByUsername(username);
 
         String url = cloudinaryService.uploadAvatar(file, user.getId());
 
         user.setAvatarUrl(url);
         user.setUpdatedAt(OffsetDateTime.now());
         userRepository.save(user);
+        userCacheService.evictUser(username);
 
         return url;
     }
