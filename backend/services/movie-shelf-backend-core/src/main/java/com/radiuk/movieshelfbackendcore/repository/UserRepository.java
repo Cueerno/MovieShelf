@@ -2,8 +2,11 @@ package com.radiuk.movieshelfbackendcore.repository;
 
 import com.radiuk.movieshelfbackendcore.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 @Repository
@@ -18,6 +21,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByEmail(String email);
 
     User getByUsername(String username);
+
+    @Modifying
+    @Query("""
+    update User u
+    set u.avatarUrl= :avatarUrl, u.updatedAt = :updatedAt
+    where u.username = :username
+    """)
+    void updateAvatarUrl(String username, String avatarUrl, OffsetDateTime updatedAt);
 
     @Modifying
     @Query("""

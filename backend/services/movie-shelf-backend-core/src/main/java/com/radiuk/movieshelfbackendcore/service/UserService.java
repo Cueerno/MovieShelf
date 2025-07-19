@@ -74,9 +74,7 @@ public class UserService {
 
         String url = cloudinaryService.uploadAvatar(file, user.getId());
 
-        user.setAvatarUrl(url);
-        user.setUpdatedAt(OffsetDateTime.now());
-        userRepository.save(user);
+        userRepository.updateAvatarUrl(username, url,  OffsetDateTime.now());
         userCacheService.evictUser(username);
 
         return url;
