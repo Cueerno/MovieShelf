@@ -1,6 +1,7 @@
 package com.radiuk.movieshelfbackendcore.controller;
 
 import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
+import com.radiuk.movieshelfbackendcore.dto.UserUpdatePasswordDto;
 import com.radiuk.movieshelfbackendcore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,12 @@ public class UserController {
     public ResponseEntity<?> update(@RequestBody UserUpdateDto userUpdateDto, @AuthenticationPrincipal UserDetails userDetails) {
         userService.update(userDetails.getUsername(), userUpdateDto);
         return ResponseEntity.ok(Map.of("message", "Profile updated"));
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<?> updatePassword(@RequestBody UserUpdatePasswordDto userUpdatePasswordDto, @AuthenticationPrincipal UserDetails userDetails) {
+        userService.updatePassword(userUpdatePasswordDto, userDetails.getUsername());
+        return ResponseEntity.ok(Map.of("message", "Password updated"));
     }
 
     @DeleteMapping("/delete")

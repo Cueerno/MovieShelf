@@ -2,12 +2,13 @@ package com.radiuk.movieshelfbackendcore.service;
 
 import com.radiuk.movieshelfbackendcore.dto.UserDto;
 import com.radiuk.movieshelfbackendcore.dto.UserUpdateDto;
+import com.radiuk.movieshelfbackendcore.dto.UserUpdatePasswordDto;
 import com.radiuk.movieshelfbackendcore.exception.UserNotUpdatedException;
 import com.radiuk.movieshelfbackendcore.mapper.UserMapper;
 import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final CloudinaryService cloudinaryService;
     private final UserCacheService userCacheService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public List<User> findAllUsers() {
@@ -76,5 +78,16 @@ public class UserService {
         userRepository.save(user);
 
         return url;
+    }
+
+    @Transactional
+    public void updatePassword(UserUpdatePasswordDto userUpdatePasswordDto, String username) {
+        User user = userRepository.getByUsername(username);
+
+        if (!passwordEncoder.matches(userUpdatePasswordDto.getOldPassword(), user.getPassword())) {
+            throw new UserNotUpdatedException("The old password is incorrect");
+        }
+
+        userRepository.updatePassword(user.getUsername(), passwordEncoder.encode(userUpdatePasswordDto.getNewPassword()), OffsetDateTime.now());
     }
 }
