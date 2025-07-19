@@ -59,8 +59,8 @@ public class AuthService {
         authenticationManager.authenticate(authenticationToken);
         UserDetails userDetails = userDetailsService.loadUserByUsername(userAuthDto.getUsername());
 
-        user.setLastLoginAt(OffsetDateTime.now());
-        userRepository.save(user);
+        userRepository.updateLastLogin(user.getUsername(), OffsetDateTime.now());
+
         userCacheService.addUserToCache(user);
 
         return jwtCore.generateToken(userDetails);
