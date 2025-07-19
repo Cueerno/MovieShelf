@@ -27,7 +27,7 @@ public class ReactionService {
 
     @Transactional
     public ReactionDto addReaction(String imdbId, ReactionDto reactionDto, String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         ReactionId id = new ReactionId(user.getId(), movie.getId());
@@ -51,7 +51,7 @@ public class ReactionService {
 
     @Transactional
     public void deleteReaction(String imdbId, String username) {
-        User user =  userCacheService.getUserEntity(username);
+        User user =  userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         reactionRepository.deleteById(new ReactionId(user.getId(), movie.getId()));

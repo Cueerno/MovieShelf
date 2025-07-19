@@ -35,7 +35,7 @@ public class CommentService {
     public CommentResponseDto addComment(String imdbId, CommentRequestDto commentRequestDto, String username) {
         Comment comment = commentMapper.commentRequestDtoToComment(commentRequestDto);
 
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         comment.setUser(user);

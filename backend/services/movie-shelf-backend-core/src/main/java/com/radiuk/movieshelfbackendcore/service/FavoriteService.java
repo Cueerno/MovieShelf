@@ -27,7 +27,7 @@ public class FavoriteService {
 
     @Transactional
     public void addToFavorites(String imdbId, String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
 
         Movie movie = movieService.getOrCreateMovie(imdbId);
 
@@ -47,7 +47,7 @@ public class FavoriteService {
 
     @Transactional
     public List<MovieDto> getFavorites(String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
 
         return favoriteRepository.findAllByUser(user).stream()
                 .map(Favorite::getMovie)
@@ -57,7 +57,7 @@ public class FavoriteService {
 
     @Transactional
     public void removeFromFavorites(String imdbId, String username) {
-        User user =  userCacheService.getUserEntity(username);
+        User user =  userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         favoriteRepository.deleteByUserAndMovie(user, movie);

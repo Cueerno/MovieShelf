@@ -15,12 +15,12 @@ public class UserCacheService {
     private final UserRepository userRepository;
 
     @Cacheable(value = "users", key = "#username")
-    public User getUserEntity(String username) {
+    public User getUserFromCache(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @CacheEvict(value = "users", key = "#username")
-    public void evictUser(String username) {
+    public void evictUserFromCache(String username) {
         System.out.println("Evicting user " + username);
     }
 }

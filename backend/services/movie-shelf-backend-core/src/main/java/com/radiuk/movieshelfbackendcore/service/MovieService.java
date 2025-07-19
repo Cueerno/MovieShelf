@@ -36,7 +36,7 @@ public class MovieService {
 
     @Transactional(readOnly = true)
     public MovieDto findByImdbId(String imdbId, String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
 
         Optional<Movie> optionalMovie = movieRepository.findByImdbId(imdbId);
 

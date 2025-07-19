@@ -35,7 +35,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDto findByUsername(String username) {
-        return userMapper.userToUserDto(userCacheService.getUserEntity(username));
+        return userMapper.userToUserDto(userCacheService.getUserFromCache(username));
     }
 
     @Transactional
@@ -59,13 +59,13 @@ public class UserService {
         user.setUpdatedAt(OffsetDateTime.now());
 
         userRepository.save(user);
-        userCacheService.evictUser(username);
+        userCacheService.evictUserFromCache(username);
     }
 
     @Transactional
     public void deleteByUsername(String username) {
         userRepository.deleteByUsername(username);
-        userCacheService.evictUser(username);
+        userCacheService.evictUserFromCache(username);
     }
 
     @Transactional
@@ -75,7 +75,7 @@ public class UserService {
         String url = cloudinaryService.uploadAvatar(file, user.getId());
 
         userRepository.updateAvatarUrl(username, url,  OffsetDateTime.now());
-        userCacheService.evictUser(username);
+        userCacheService.evictUserFromCache(username);
 
         return url;
     }

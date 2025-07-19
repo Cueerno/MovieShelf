@@ -27,7 +27,7 @@ public class RatingService {
 
     @Transactional
     public RatingDto addRating(String imdbId, RatingDto ratingDto, String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseGet(() -> movieService.getOrCreateMovie(imdbId));
 
         RatingId id = new RatingId(user.getId(), movie.getId());
@@ -51,7 +51,7 @@ public class RatingService {
 
     @Transactional
     public void deleteRatting(String imdbId, String username) {
-        User user = userCacheService.getUserEntity(username);
+        User user = userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
         ratingRepository.deleteById(new RatingId(user.getId(), movie.getId()));

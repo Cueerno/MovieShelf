@@ -17,6 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("UserDetailsServiceImpl loadUserByUsername");
 
-        return new UserDetailsImpl(userCacheService.getUserEntity(username));
+        return new UserDetailsImpl(userCacheService.getUserFromCache(username));
     }
 }
