@@ -4,6 +4,7 @@ import com.radiuk.movieshelfbackendcore.model.User;
 import com.radiuk.movieshelfbackendcore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,12 @@ import org.springframework.stereotype.Service;
 public class UserCacheService {
 
     private final UserRepository userRepository;
+
+    @CachePut(value = "users", key = "#result.username")
+    public User addUserToCache(User user) {
+        System.out.println("Caching new user " + user.getUsername());
+        return user;
+    }
 
     @Cacheable(value = "users", key = "#username")
     public User getUserFromCache(String username) {

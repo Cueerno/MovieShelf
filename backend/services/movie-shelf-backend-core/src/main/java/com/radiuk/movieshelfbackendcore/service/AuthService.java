@@ -29,6 +29,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtCore jwtCore;
     private final UserDetailsService userDetailsService;
+    private final UserCacheService userCacheService;
 
     @Transactional
     public void register(UserRegistrationDto userRegistrationDTO) {
@@ -52,7 +53,7 @@ public class AuthService {
     }
 
     public String getToken(UserAuthDto userAuthDto) {
-        User user = userRepository.findByUsername(userAuthDto.getUsername()).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findByUsername(userAuthDto.getUsername()).orElseThrow(()  -> new EntityNotFoundException("User not found"));
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userAuthDto.getUsername(), userAuthDto.getPassword());
         authenticationManager.authenticate(authenticationToken);
@@ -60,6 +61,7 @@ public class AuthService {
 
         user.setLastLoginAt(OffsetDateTime.now());
         userRepository.save(user);
+        userCacheService.addUserToCache(user);
 
         return jwtCore.generateToken(userDetails);
     }
