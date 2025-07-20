@@ -84,7 +84,7 @@ public class UserService {
     public void updatePassword(UserUpdatePasswordDto userUpdatePasswordDto, String username) {
         User user = userRepository.getByUsername(username);
 
-        if (!passwordEncoder.matches(userUpdatePasswordDto.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(userUpdatePasswordDto.getCurrentPassword(), user.getPassword())) {
             throw new UserNotUpdatedException("The old password is incorrect");
         }
 

@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {getUserData, uploadUserAvatar, deleteUser, updateUser} from '../../api/user';
+import {getUserData, uploadUserAvatar, deleteUser, updateUser, updatePassword} from '../../api/user';
 import {useNavigate} from 'react-router-dom';
 import {useGlobalLoading} from '../../context/LoadingContext';
 
@@ -11,6 +11,8 @@ export default function Settings() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const {setIsLoading} = useGlobalLoading();
+    const [passwordForm, setPasswordForm] = useState({currentPassword: '', newPassword: ''});
+    const [passwordStatus, setPasswordStatus] = useState('');
 
     useEffect(() => {
         document.title = 'Settings';
@@ -68,6 +70,28 @@ export default function Settings() {
             setIsLoading(false);
         }
     };
+
+    const handlePasswordFormChange = (e) => {
+        setPasswordForm({...passwordForm, [e.target.name]: e.target.value});
+    };
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        setPasswordStatus('Changing password...');
+        setIsLoading(true);
+
+        try {
+            await updatePassword(passwordForm);
+            setPasswordForm({oldPassword: '', newPassword: ''});
+            setPasswordStatus('✅ Password updated');
+        } catch (err) {
+            console.error(err);
+            setPasswordStatus(`❌ ${err.message}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     const handleDelete = async () => {
         if (!window.confirm('Are you sure you want to delete your account?')) return;
@@ -175,6 +199,47 @@ export default function Settings() {
                 </button>
                 {status && <p>{status}</p>}
             </form>
+
+            <hr style={{margin: '2rem 0'}}/>
+
+            <h3>🔐 Change Password</h3>
+            <form
+                onSubmit={handlePasswordSubmit}
+                style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}
+            >
+                <input
+                    type="password"
+                    name="currentPassword"
+                    placeholder="Current Password"
+                    value={passwordForm.currentPassword}
+                    onChange={handlePasswordFormChange}
+                    required
+                />
+                <input
+                    type="password"
+                    name="newPassword"
+                    placeholder="New Password"
+                    value={passwordForm.newPassword}
+                    onChange={handlePasswordFormChange}
+                    required
+                />
+                <button
+                    type="submit"
+                    style={{
+                        background: '#17a2b8',
+                        color: '#fff',
+                        padding: '0.6rem',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🔁 Update Password
+                </button>
+                {passwordStatus && <p>{passwordStatus}</p>}
+            </form>
+
 
             <hr style={{margin: '2rem 0'}}/>
 

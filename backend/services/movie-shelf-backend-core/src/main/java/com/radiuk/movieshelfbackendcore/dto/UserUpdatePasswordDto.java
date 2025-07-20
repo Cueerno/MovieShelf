@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class UserUpdatePasswordDto {
 
-    private String oldPassword;
+    private String currentPassword;
 
     private String newPassword;
 }
