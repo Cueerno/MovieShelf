@@ -52,6 +52,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    @Transactional
     public String getToken(UserAuthDto userAuthDto) {
         User user = userRepository.findByUsername(userAuthDto.getUsername()).orElseThrow(()  -> new EntityNotFoundException("User not found"));
 

@@ -27,6 +27,7 @@ public class CommentService {
     private final MovieService movieService;
     private final UserCacheService userCacheService;
 
+    @Transactional(readOnly = true)
     public List<CommentResponseDto> findAllCommentsByMovie(String imdbId) {
         return commentMapper.toDtoList(commentRepository.findAllByImdbId(imdbId));
     }

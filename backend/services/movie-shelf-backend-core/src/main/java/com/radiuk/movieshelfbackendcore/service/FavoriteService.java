@@ -45,7 +45,7 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MovieDto> getFavorites(String username) {
         User user = userCacheService.getUserFromCache(username);
 
@@ -60,7 +60,7 @@ public class FavoriteService {
         User user =  userCacheService.getUserFromCache(username);
         Movie movie = movieRepository.findByImdbId(imdbId).orElseThrow(EntityNotFoundException::new);
 
-        favoriteRepository.deleteByUserAndMovie(user, movie);
+        favoriteRepository.deleteById(new FavoriteId(user.getId(), movie.getId()));
 
         boolean stillFavorite = favoriteRepository.existsByMovie((movie));
 
