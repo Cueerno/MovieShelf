@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -32,9 +33,15 @@ public class RedisCacheConfig {
                 .build();
     }
 
-    @Bean CacheManager cacheManager(RedisConnectionFactory factory, ObjectMapper objectMapper) {
-        Jackson2JsonRedisSerializer<User> dtoSerializer = new Jackson2JsonRedisSerializer<>(User.class);
-        dtoSerializer.setObjectMapper(objectMapper);
+    @Bean
+    CacheManager cacheManager(RedisConnectionFactory factory, ObjectMapper objectMapper) {
+        Jackson2JsonRedisSerializer<User> userSerializer = new Jackson2JsonRedisSerializer<>(User.class);
+        userSerializer.setObjectMapper(objectMapper);
+
+        Jackson2JsonRedisSerializer<Movie> movieSerializer = new Jackson2JsonRedisSerializer<>(Movie.class);
+        movieSerializer.setObjectMapper(objectMapper);
+
+        GenericJackson2JsonRedisSerializer list = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig();
 
@@ -44,11 +51,20 @@ public class RedisCacheConfig {
                 .serializeKeysWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(dtoSerializer));
+                        .fromSerializer(userSerializer));
+        RedisCacheConfiguration topFiveCacheConfig = defaultConfig
+                .entryTtl(Duration.ofMinutes(5))
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(list));
+
 
         return RedisCacheManager.builder(factory)
                 .cacheDefaults(defaultConfig)
                 .withCacheConfiguration("users", userCacheConfig)
+                .withCacheConfiguration("topMovies", topFiveCacheConfig)
                 .transactionAware()
                 .build();
     }

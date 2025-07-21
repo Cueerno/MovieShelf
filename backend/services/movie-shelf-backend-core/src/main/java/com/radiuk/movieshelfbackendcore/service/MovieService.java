@@ -8,6 +8,7 @@ import com.radiuk.movieshelfbackendcore.model.*;
 import com.radiuk.movieshelfbackendcore.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -87,8 +88,11 @@ public class MovieService {
         return movie;
     }
 
+    @Cacheable(value = "topMovies", key = "'top5'")
+    @Transactional(readOnly = true)
     public List<MovieDto> getTopRatedMovies() {
         Pageable topFive = PageRequest.of(0, 5);
-        return movieMapper.movieListToMovieDtoList(movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive));
+        List<Movie> top = movieRepository.findTopMoviesFavoritedByMultipleUsers(topFive);
+        return movieMapper.movieListToMovieDtoList(top);
     }
 }
