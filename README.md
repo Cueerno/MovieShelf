@@ -21,6 +21,9 @@
 - **Language:** Java 21,
 - **Framework:** Spring Boot (Web, Data JPA, Security),
 - **ORM:** Hibernate.
+- **Authentication:** JWT
+- **Caching:** Redis
+- **Cloud Storage:** Cloudinary
 
 ### External API:
 - OMDb API.
