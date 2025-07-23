@@ -13,12 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.*;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.function.Function;
 
 @Configuration
 @EnableCaching
@@ -35,38 +34,43 @@ public class RedisCacheConfig {
 
     @Bean
     CacheManager cacheManager(RedisConnectionFactory factory, ObjectMapper objectMapper) {
+        RedisCacheConfiguration baseConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeKeysWith(
+                        RedisSerializationContext
+                                .SerializationPair
+                                .fromSerializer(new StringRedisSerializer())
+                );
+
+        Function<CacheConfigEntry, RedisCacheConfiguration> createConfig =
+                entry -> baseConfig
+                        .entryTtl(entry.ttl)
+                        .serializeValuesWith(
+                                RedisSerializationContext
+                                        .SerializationPair
+                                        .fromSerializer(entry.valueSerializer)
+                        );
+
         Jackson2JsonRedisSerializer<User> userSerializer = new Jackson2JsonRedisSerializer<>(User.class);
         userSerializer.setObjectMapper(objectMapper);
 
-        Jackson2JsonRedisSerializer<Movie> movieSerializer = new Jackson2JsonRedisSerializer<>(Movie.class);
-        movieSerializer.setObjectMapper(objectMapper);
+        GenericJackson2JsonRedisSerializer listSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
-        GenericJackson2JsonRedisSerializer list = new GenericJackson2JsonRedisSerializer(objectMapper);
-
-        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig();
-
-        RedisCacheConfiguration userCacheConfig = defaultConfig
-                .entryTtl(Duration.ofMinutes(10))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(userSerializer));
-        RedisCacheConfiguration topFiveCacheConfig = defaultConfig
-                .entryTtl(Duration.ofMinutes(5))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(list));
-
+        Map<String, RedisCacheConfiguration> configs = Map.of(
+                "users", createConfig.apply(new CacheConfigEntry(Duration.ofHours(1), userSerializer)),
+                "topMovies", createConfig.apply(new CacheConfigEntry(Duration.ofMinutes(10), listSerializer))
+        );
 
         return RedisCacheManager.builder(factory)
-                .cacheDefaults(defaultConfig)
-                .withCacheConfiguration("users", userCacheConfig)
-                .withCacheConfiguration("topMovies", topFiveCacheConfig)
+                .cacheDefaults(baseConfig)
+                .withInitialCacheConfigurations(configs)
                 .transactionAware()
                 .build();
     }
+
+    private record CacheConfigEntry(
+            Duration ttl,
+            RedisSerializer<?> valueSerializer
+    ) {}
 }
 
