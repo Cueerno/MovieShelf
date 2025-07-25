@@ -30,4 +30,4 @@
 
 
 ## 🗄 Database diagram
-![Database Schema Diagrsm](diagrams/database.png)
+![Database Schema Diagram](diagrams/database.png)
